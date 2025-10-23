@@ -1,0 +1,4972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solo Leveling Pro - Ultimate Productivity Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        /* =============================================== */
+        /* ENHANCED CSS VARIABLES & BASE STYLES */
+        /* =============================================== */
+        :root {
+            --primary: #0a0a1a;
+            --secondary: #1a1a2e;
+            --accent: #4a00e0;
+            --accent-light: #8e2de2;
+            --text: #ffffff;
+            --text-dim: #a0a0a0;
+            --xp-bar: linear-gradient(90deg, #4a00e0, #8e2de2);
+            --card-bg: rgba(26, 26, 46, 0.85);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --glow: 0 0 25px rgba(138, 43, 226, 0.6);
+            --success: #00ff88;
+            --warning: #ffaa00;
+            --danger: #ff3860;
+            --gold: #ffd700;
+            --blue: #00a8ff;
+            --purple: #9c27b0;
+            --shop-gold: #ffd700;
+            --shop-silver: #c0c0c0;
+            --shop-bronze: #cd7f32;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Rajdhani', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* =============================================== */
+        /* ENHANCED BACKGROUND & ANIMATIONS */
+        /* =============================================== */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(74, 0, 224, 0.15) 0%, transparent 70%);
+            animation: float 20s infinite linear;
+        }
+
+        .bg-circle:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: 10%;
+            left: 5%;
+            animation-duration: 25s;
+        }
+
+        .bg-circle:nth-child(2) {
+            width: 500px;
+            height: 500px;
+            top: 60%;
+            right: 10%;
+            animation-duration: 30s;
+            animation-delay: 5s;
+        }
+
+        .bg-circle:nth-child(3) {
+            width: 200px;
+            height: 200px;
+            bottom: 20%;
+            left: 20%;
+            animation-duration: 20s;
+            animation-delay: 10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-20px) rotate(90deg); }
+            50% { transform: translateY(0) rotate(180deg); }
+            75% { transform: translateY(20px) rotate(270deg); }
+        }
+
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(138, 43, 226, 0.6);
+            border-radius: 50%;
+            animation: particle-float 15s infinite linear;
+            box-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+        }
+
+        @keyframes particle-float {
+            0% { transform: translateY(100vh) translateX(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100px) translateX(100px) rotate(360deg); opacity: 0; }
+        }
+
+        /* =============================================== */
+        /* ENHANCED CONTAINER & LAYOUT */
+        /* =============================================== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* =============================================== */
+        /* ENHANCED HEADER & NAVIGATION */
+        /* =============================================== */
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px 0;
+            position: relative;
+        }
+
+        .header-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(138, 43, 226, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(40px);
+            z-index: -1;
+            animation: pulse-glow 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.1); }
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            background: linear-gradient(to right, #fff, #8e2de2, #4a00e0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 15px rgba(142, 45, 226, 0.4);
+            letter-spacing: 4px;
+            position: relative;
+            display: inline-block;
+            font-family: 'Orbitron', sans-serif;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from { text-shadow: 0 2px 15px rgba(142, 45, 226, 0.4); }
+            to { text-shadow: 0 2px 25px rgba(142, 45, 226, 0.8), 0 0 30px rgba(74, 0, 224, 0.4); }
+        }
+
+        .tagline {
+            color: var(--text-dim);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            font-style: italic;
+            letter-spacing: 3px;
+            animation: fadeInUp 0.8s ease-out 0.3s both;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* =============================================== */
+        /* ENHANCED USER PROFILE */
+        /* =============================================== */
+        .user-info {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            animation: slideInDown 0.8s ease-out 0.5s both;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .user-info:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(138, 43, 226, 0.5);
+        }
+
+        @keyframes slideInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-details {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.6);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .user-name {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: var(--accent-light);
+        }
+
+        .user-level-display {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+            margin-top: 5px;
+        }
+
+        .user-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-stats {
+            display: flex;
+            gap: 25px;
+            text-align: center;
+        }
+
+        .user-stat {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-stat-value {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--gold);
+        }
+
+        .user-stat-label {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-top: 5px;
+        }
+
+        /* =============================================== */
+        /* ENHANCED NAVIGATION */
+        /* =============================================== */
+        .app-navigation {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            background: var(--card-bg);
+            border: none;
+            color: var(--text);
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            box-shadow: 0 8px 25px rgba(74, 0, 224, 0.4);
+        }
+
+        /* =============================================== */
+        /* ENHANCED DASHBOARD */
+        /* =============================================== */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 35px;
+            margin-bottom: 50px;
+            animation: slideInUp 0.8s ease-out 0.7s both;
+        }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .level-card {
+            background: var(--card-bg);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: var(--shadow), var(--glow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(10px);
+        }
+
+        .level-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(to right, var(--accent), var(--accent-light));
+            animation: progress-line 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes progress-line {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        .level-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(138, 43, 226, 0.7);
+        }
+
+        .level-title {
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .level-number {
+            font-size: 6.5rem;
+            font-weight: bold;
+            margin-bottom: 35px;
+            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 30px rgba(138, 43, 226, 0.8);
+            position: relative;
+            display: inline-block;
+            font-family: 'Orbitron', sans-serif;
+            animation: numberPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes numberPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .xp-info {
+            margin-bottom: 30px;
+        }
+
+        .xp-text {
+            font-size: 1.4rem;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .xp-bar-container {
+            height: 32px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .xp-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4a00e0, #8e2de2, #4a00e0);
+            background-size: 200% 100%;
+            border-radius: 16px;
+            transition: width 0.8s cubic-bezier(0.22, 0.61, 0.36, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.7);
+            animation: xpShimmer 3s infinite linear;
+        }
+
+        @keyframes xpShimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 35px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(to right, var(--accent), var(--accent-light));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(138, 43, 226, 0.5);
+        }
+
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .stat-value {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 18px;
+            color: var(--accent-light);
+            text-shadow: 0 0 20px rgba(138, 43, 226, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover .stat-value {
+            transform: scale(1.1);
+            color: var(--gold);
+        }
+
+        .stat-label {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        /* =============================================== */
+        /* ENHANCED MAIN COUNTER */
+        /* =============================================== */
+        .main-counter-section {
+            margin-bottom: 50px;
+            animation: slideInUp 0.8s ease-out 0.9s both;
+        }
+
+        .main-counter-card {
+            background: var(--card-bg);
+            border-radius: 30px;
+            padding: 60px;
+            box-shadow: var(--shadow), var(--glow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(10px);
+        }
+
+        .main-counter-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(to right, var(--accent), var(--accent-light), var(--accent));
+            background-size: 200% 100%;
+            animation: shimmer-line 3s infinite linear;
+        }
+
+        @keyframes shimmer-line {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .main-counter-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 35px rgba(138, 43, 226, 0.8);
+        }
+
+        .main-counter-title {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .main-counter-value {
+            font-size: 6rem;
+            font-weight: bold;
+            margin-bottom: 25px;
+            color: var(--gold);
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.9);
+            font-family: 'Orbitron', sans-serif;
+            transition: all 0.3s ease;
+            animation: counterPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes counterPulse {
+            0%, 100% { text-shadow: 0 0 30px rgba(255, 215, 0, 0.9); }
+            50% { text-shadow: 0 0 50px rgba(255, 215, 0, 1), 0 0 70px rgba(255, 215, 0, 0.7); }
+        }
+
+        .main-counter-subtitle {
+            color: var(--text-dim);
+            font-size: 1.5rem;
+            margin-bottom: 35px;
+        }
+
+        .main-counter-date {
+            color: var(--accent-light);
+            font-size: 1.6rem;
+            font-weight: bold;
+            margin-bottom: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        /* =============================================== */
+        /* ENHANCED TARGETS SECTION */
+        /* =============================================== */
+        .targets-section {
+            margin-bottom: 40px;
+            animation: slideInUp 0.8s ease-out 1.1s both;
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            padding-bottom: 20px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(to right, transparent, var(--accent-light), transparent);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            color: white;
+            border: none;
+            padding: 18px 36px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 25px rgba(74, 0, 224, 0.4);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.2rem;
+            z-index: 10;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(74, 0, 224, 0.6);
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .targets-list {
+            background: var(--card-bg);
+            border-radius: 25px;
+            padding: 35px;
+            box-shadow: var(--shadow);
+            min-height: 400px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        .target-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 18px;
+            padding: 30px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-left: 6px solid var(--accent);
+            position: relative;
+            overflow: hidden;
+            animation: slideInRight 0.5s ease-out both;
+            z-index: 10;
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .target-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(138, 43, 226, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .target-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(10px) translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .target-item:hover::before {
+            opacity: 1;
+        }
+
+        .target-item.completed {
+            border-left-color: var(--success);
+            opacity: 0.8;
+            animation: completePulse 0.6s ease-out;
+        }
+
+        @keyframes completePulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .target-info h3 {
+            margin-bottom: 12px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .target-info p {
+            color: var(--text-dim);
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .target-timer {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--warning);
+            font-weight: bold;
+            margin-top: 8px;
+            font-size: 1.1rem;
+        }
+
+        /* =============================================== */
+        /* ENHANCED TIMER SYSTEM */
+        /* =============================================== */
+        .timer-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .timer-display {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            color: var(--gold);
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+            padding: 8px 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            min-width: 140px;
+            text-align: center;
+        }
+
+        .timer-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            z-index: 10;
+        }
+
+        .timer-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .timer-btn.start {
+            background: rgba(0, 255, 136, 0.2);
+            color: white;
+        }
+
+        .timer-btn.start:hover {
+            background: rgba(0, 255, 136, 0.3);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+        }
+
+        .timer-btn.pause {
+            background: rgba(255, 170, 0, 0.2);
+            color: white;
+        }
+
+        .timer-btn.pause:hover {
+            background: rgba(255, 170, 0, 0.3);
+            box-shadow: 0 0 15px rgba(255, 170, 0, 0.5);
+        }
+
+        .timer-btn.reset {
+            background: rgba(255, 56, 96, 0.2);
+            color: white;
+        }
+
+        .timer-btn.reset:hover {
+            background: rgba(255, 56, 96, 0.3);
+            box-shadow: 0 0 15px rgba(255, 56, 96, 0.5);
+        }
+
+        .timer-btn.fullscreen {
+            background: rgba(138, 43, 226, 0.2);
+            color: white;
+        }
+
+        .timer-btn.fullscreen:hover {
+            background: rgba(138, 43, 226, 0.3);
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.5);
+        }
+
+        .target-actions {
+            display: flex;
+            gap: 15px;
+            z-index: 10;
+        }
+
+        .btn-complete {
+            background: rgba(74, 224, 0, 0.2);
+            color: var(--success);
+            border: 1px solid rgba(74, 224, 0, 0.3);
+            padding: 14px 22px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .btn-complete:hover {
+            background: rgba(74, 224, 0, 0.3);
+            box-shadow: 0 0 20px rgba(74, 224, 0, 0.6);
+            transform: scale(1.05);
+        }
+
+        .btn-delete {
+            background: rgba(224, 0, 0, 0.2);
+            color: var(--danger);
+            border: 1px solid rgba(224, 0, 0, 0.3);
+            padding: 14px 22px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .btn-delete:hover {
+            background: rgba(224, 0, 0, 0.3);
+            box-shadow: 0 0 20px rgba(224, 0, 0, 0.6);
+            transform: scale(1.05);
+        }
+
+        .empty-targets {
+            text-align: center;
+            padding: 100px 30px;
+            color: var(--text-dim);
+        }
+
+        .empty-targets p {
+            margin-bottom: 35px;
+            font-size: 1.5rem;
+        }
+
+        /* =============================================== */
+        /* ENHANCED ANALYTICS SECTION */
+        /* =============================================== */
+        .analytics-section {
+            margin-bottom: 50px;
+            animation: slideInUp 0.8s ease-out 1.3s both;
+        }
+
+        .analytics-card {
+            background: var(--card-bg);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin-top: 20px;
+        }
+
+        .time-details {
+            margin-top: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            display: none;
+        }
+
+        .time-details.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .time-sessions {
+            margin-top: 15px;
+        }
+
+        .time-session {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* =============================================== */
+        /* ENHANCED SHOP SECTION */
+        /* =============================================== */
+        .shop-section {
+            margin-bottom: 50px;
+            animation: slideInUp 0.8s ease-out 1.5s both;
+        }
+
+        .shop-card {
+            background: var(--card-bg);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .shop-currency {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.05));
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .currency-balance {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .currency-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--gold), #ffed4e);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: #8b6914;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .currency-info h3 {
+            color: var(--text-dim);
+            margin-bottom: 5px;
+        }
+
+        .currency-amount {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--gold);
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .shop-categories {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .shop-category {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .shop-category:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .shop-category.active {
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            box-shadow: 0 5px 15px rgba(74, 0, 224, 0.4);
+        }
+
+        .shop-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .shop-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 25px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .shop-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(to right, var(--accent), var(--accent-light));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .shop-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .shop-item:hover::before {
+            transform: scaleX(1);
+        }
+
+        .item-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            z-index: 2;
+        }
+
+        .badge-featured {
+            background: linear-gradient(135deg, var(--gold), #ffed4e);
+            color: #8b6914;
+        }
+
+        .badge-new {
+            background: linear-gradient(135deg, var(--success), #00ffaa);
+            color: #006644;
+        }
+
+        .badge-popular {
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            color: white;
+        }
+
+        .item-image {
+            width: 100%;
+            height: 150px;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            border-radius: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .item-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(74, 0, 224, 0.2), transparent);
+        }
+
+        .item-info {
+            margin-bottom: 20px;
+        }
+
+        .item-info h4 {
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+            color: var(--accent-light);
+        }
+
+        .item-info p {
+            color: var(--text-dim);
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .item-price {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .price-amount {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--gold);
+        }
+
+        .price-icon {
+            color: var(--gold);
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-buy {
+            flex: 1;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-buy:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74, 0, 224, 0.4);
+        }
+
+        .btn-preview {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text);
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-preview:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* =============================================== */
+        /* ENHANCED SETTINGS SECTION */
+        /* =============================================== */
+        .settings-section {
+            margin-bottom: 50px;
+            animation: slideInUp 0.8s ease-out 1.7s both;
+        }
+
+        .settings-card {
+            background: var(--card-bg);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .settings-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .settings-tab {
+            flex: 1;
+            padding: 15px;
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .settings-tab.active {
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+        }
+
+        .settings-content {
+            display: none;
+        }
+
+        .settings-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .settings-group {
+            margin-bottom: 30px;
+        }
+
+        .settings-group h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--accent-light);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .setting-info h4 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .setting-info p {
+            color: var(--text-dim);
+            font-size: 1rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--accent);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        /* =============================================== */
+        /* ENHANCED MODALS */
+        /* =============================================== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            animation: modalBg 0.3s ease;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        @keyframes modalBg {
+            from { backdrop-filter: blur(0); background: rgba(0, 0, 0, 0); }
+            to { backdrop-filter: blur(10px); background: rgba(0, 0, 0, 0.9); }
+        }
+
+        .modal-content {
+            background: var(--secondary);
+            border-radius: 30px;
+            padding: 50px;
+            width: 90%;
+            max-width: 650px;
+            box-shadow: var(--shadow), 0 0 50px rgba(138, 43, 226, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            animation: modalAppear 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(15px);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @keyframes modalAppear {
+            0% { opacity: 0; transform: scale(0.8) translateY(50px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .modal h2 {
+            margin-bottom: 35px;
+            text-align: center;
+            color: var(--accent-light);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            font-size: 2.2rem;
+        }
+
+        .modal h2::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 20%;
+            width: 60%;
+            height: 3px;
+            background: linear-gradient(to right, transparent, var(--accent-light), transparent);
+        }
+
+        .form-group {
+            margin-bottom: 35px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 15px;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.3rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 18px 22px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            color: var(--text);
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.5);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text);
+        }
+
+        /* =============================================== */
+        /* ENHANCED NOTIFICATIONS & EFFECTS */
+        /* =============================================== */
+        .notification {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: var(--card-bg);
+            border-radius: 18px;
+            padding: 25px 30px;
+            box-shadow: var(--shadow), 0 0 25px rgba(138, 43, 226, 0.7);
+            border-left: 6px solid var(--accent);
+            transform: translateX(150%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+            max-width: 450px;
+            backdrop-filter: blur(15px);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification h4 {
+            margin-bottom: 8px;
+            color: var(--accent-light);
+            font-size: 1.4rem;
+        }
+
+        .notification p {
+            font-size: 1.2rem;
+            color: var(--text-dim);
+        }
+
+        .level-up {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            flex-direction: column;
+            text-align: center;
+            backdrop-filter: blur(20px);
+        }
+
+        .level-up.show {
+            display: flex;
+            animation: levelUpBg 0.5s ease;
+        }
+
+        @keyframes levelUpBg {
+            from { backdrop-filter: blur(0); background: rgba(0, 0, 0, 0); }
+            to { backdrop-filter: blur(20px); background: rgba(0, 0, 0, 0.95); }
+        }
+
+        .level-up-content {
+            background: var(--card-bg);
+            border-radius: 30px;
+            padding: 70px;
+            max-width: 650px;
+            width: 90%;
+            box-shadow: 0 0 80px rgba(74, 0, 224, 0.9);
+            border: 3px solid var(--accent-light);
+            animation: levelUpPulse 2s infinite, levelUpAppear 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+        }
+
+        @keyframes levelUpAppear {
+            0% { opacity: 0; transform: scale(0.5) rotate(-10deg); }
+            100% { opacity: 1; transform: scale(1) rotate(0); }
+        }
+
+        @keyframes levelUpPulse {
+            0% { box-shadow: 0 0 80px rgba(74, 0, 224, 0.7); }
+            50% { box-shadow: 0 0 100px rgba(142, 45, 226, 1); }
+            100% { box-shadow: 0 0 80px rgba(74, 0, 224, 0.7); }
+        }
+
+        .level-up h2 {
+            font-size: 5.5rem;
+            margin-bottom: 35px;
+            background: linear-gradient(to right, #4a00e0, #8e2de2, #00ff88);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 30px rgba(138, 43, 226, 0.9);
+            font-family: 'Orbitron', sans-serif;
+            animation: levelUpText 1s ease-in-out infinite alternate;
+        }
+
+        @keyframes levelUpText {
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
+        }
+
+        .level-up p {
+            font-size: 2rem;
+            margin-bottom: 45px;
+            color: var(--text-dim);
+        }
+
+        /* =============================================== */
+        /* ENHANCED FULLSCREEN TIMER */
+        /* =============================================== */
+        .fullscreen-timer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(20px);
+        }
+
+        .fullscreen-timer.active {
+            display: flex;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .fullscreen-timer-content {
+            text-align: center;
+            padding: 50px;
+            background: var(--card-bg);
+            border-radius: 30px;
+            box-shadow: var(--shadow), 0 0 50px rgba(138, 43, 226, 0.7);
+            border: 3px solid var(--accent-light);
+            max-width: 600px;
+            width: 90%;
+            backdrop-filter: blur(15px);
+        }
+
+        .fullscreen-timer h2 {
+            font-size: 3rem;
+            margin-bottom: 30px;
+            color: var(--accent-light);
+        }
+
+        .fullscreen-timer-display {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 5rem;
+            color: var(--gold);
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.9);
+            margin: 40px 0;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.8); }
+        }
+
+        .fullscreen-timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .fullscreen-timer .timer-btn {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+        }
+
+        /* =============================================== */
+        /* ENHANCED ACHIEVEMENTS */
+        /* =============================================== */
+        .achievement-badge {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: var(--card-bg);
+            border-radius: 18px;
+            padding: 25px;
+            box-shadow: var(--shadow), 0 0 25px rgba(138, 43, 226, 0.7);
+            border-left: 6px solid gold;
+            transform: translateX(-150%);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+            max-width: 350px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            backdrop-filter: blur(15px);
+        }
+
+        .achievement-badge.show {
+            transform: translateX(0);
+        }
+
+        .achievement-icon {
+            font-size: 2.8rem;
+            color: gold;
+            animation: achievementGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes achievementGlow {
+            from { filter: drop-shadow(0 0 5px gold); }
+            to { filter: drop-shadow(0 0 15px gold); }
+        }
+
+        .achievement-text h4 {
+            color: gold;
+            margin-bottom: 8px;
+            font-size: 1.4rem;
+        }
+
+        .achievement-text p {
+            font-size: 1.1rem;
+            color: var(--text-dim);
+        }
+
+        /* =============================================== */
+        /* ENHANCED LOADING & SYNC STATUS */
+        /* =============================================== */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 10, 26, 0.98);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            flex-direction: column;
+            gap: 35px;
+            backdrop-filter: blur(20px);
+        }
+
+        .spinner {
+            width: 80px;
+            height: 80px;
+            border: 10px solid rgba(138, 43, 226, 0.3);
+            border-top: 10px solid var(--accent-light);
+            border-radius: 50%;
+            animation: spin 1.5s linear infinite;
+            box-shadow: 0 0 30px rgba(138, 43, 226, 0.5);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading p {
+            font-size: 1.5rem;
+            color: var(--text-dim);
+            animation: loadingText 2s ease-in-out infinite;
+        }
+
+        @keyframes loadingText {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        .sync-status {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--card-bg);
+            border-radius: 40px;
+            padding: 14px 24px;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .sync-status:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .sync-status.syncing {
+            color: var(--warning);
+        }
+
+        .sync-status.synced {
+            color: var(--success);
+        }
+
+        .sync-status.error {
+            color: var(--danger);
+        }
+
+        /* =============================================== */
+        /* ENHANCED MOBILE DASHBOARD */
+        /* =============================================== */
+        .mobile-dashboard {
+            display: none;
+            margin-bottom: 30px;
+        }
+
+        .mobile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding: 0 10px;
+        }
+
+        .mobile-user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .mobile-user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.6);
+        }
+
+        .mobile-user-details h3 {
+            font-size: 1.3rem;
+            color: var(--accent-light);
+            margin-bottom: 4px;
+        }
+
+        .mobile-user-details p {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+
+        .mobile-level-display {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-level-display .level {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: var(--accent-light);
+            margin-bottom: 5px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .mobile-level-display .label {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .mobile-main-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .mobile-stat-card {
+            background: var(--card-bg);
+            border-radius: 18px;
+            padding: 20px 15px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .mobile-stat-card:active {
+            transform: scale(0.98);
+        }
+
+        .mobile-stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: var(--accent-light);
+        }
+
+        .mobile-stat-label {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+
+        .mobile-xp-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px 20px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow), var(--glow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .mobile-xp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .mobile-xp-title {
+            font-size: 1.1rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .mobile-xp-progress {
+            font-size: 0.9rem;
+            color: var(--accent-light);
+            font-weight: bold;
+        }
+
+        .mobile-xp-bar-container {
+            height: 20px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 12px;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-xp-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4a00e0, #8e2de2, #4a00e0);
+            background-size: 200% 100%;
+            border-radius: 10px;
+            transition: width 0.8s cubic-bezier(0.22, 0.61, 0.36, 1);
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.7);
+            animation: xpShimmer 3s infinite linear;
+        }
+
+        .mobile-xp-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+
+        .mobile-quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .mobile-action-btn {
+            background: var(--card-bg);
+            border: none;
+            color: var(--text);
+            padding: 18px 15px;
+            border-radius: 15px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-action-btn:active {
+            transform: scale(0.98);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .mobile-action-btn i {
+            font-size: 1.5rem;
+            color: var(--accent-light);
+        }
+
+        .mobile-action-btn span {
+            font-size: 0.9rem;
+        }
+
+        .mobile-main-counter {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px 20px;
+            box-shadow: var(--shadow), var(--glow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .mobile-counter-title {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .mobile-counter-value {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--gold);
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.9);
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .mobile-counter-subtitle {
+            color: var(--text-dim);
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+
+        .mobile-counter-date {
+            color: var(--accent-light);
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .mobile-counter-btn {
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(74, 0, 224, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        .mobile-counter-btn:active {
+            transform: scale(0.98);
+        }
+
+        .mobile-recent-targets {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-recent-title {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--accent-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .mobile-target-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 18px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .mobile-target-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .mobile-target-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--text);
+        }
+
+        .mobile-target-xp {
+            font-size: 0.9rem;
+            color: var(--accent-light);
+            font-weight: bold;
+        }
+
+        .mobile-target-progress {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .mobile-target-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-light));
+            border-radius: 3px;
+        }
+
+        .mobile-target-time {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+
+        .mobile-target-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .mobile-target-btn {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.08);
+            border: none;
+            color: var(--text);
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .mobile-target-btn:active {
+            transform: scale(0.95);
+        }
+
+        .mobile-target-btn.start {
+            background: rgba(0, 255, 136, 0.15);
+            color: var(--success);
+        }
+
+        .mobile-target-btn.complete {
+            background: rgba(74, 0, 224, 0.15);
+            color: var(--accent-light);
+        }
+
+        .mobile-empty-targets {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-dim);
+        }
+
+        .mobile-empty-targets p {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+
+        .mobile-add-target-btn {
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(74, 0, 224, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        .mobile-add-target-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* =============================================== */
+        /* ENHANCED RESPONSIVE DESIGN */
+        /* =============================================== */
+        @media (max-width: 1024px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .shop-items {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .tagline {
+                font-size: 1.2rem;
+            }
+            
+            .user-info {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .user-stats {
+                justify-content: center;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .target-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .target-actions {
+                margin-top: 20px;
+                width: 100%;
+                justify-content: flex-end;
+            }
+            
+            .timer-container {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .level-number {
+                font-size: 5rem;
+            }
+
+            .section-title {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+
+            .modal-actions {
+                flex-direction: column;
+            }
+
+            .main-counter-value {
+                font-size: 4.5rem;
+            }
+
+            .main-counter-card {
+                padding: 40px 25px;
+            }
+
+            .level-up-content {
+                padding: 40px 25px;
+            }
+
+            .level-up h2 {
+                font-size: 4rem;
+            }
+
+            .fullscreen-timer-display {
+                font-size: 3rem;
+                padding: 20px;
+            }
+
+            .fullscreen-timer-controls {
+                flex-wrap: wrap;
+            }
+
+            .app-navigation {
+                flex-wrap: wrap;
+            }
+
+            .shop-categories {
+                justify-content: center;
+            }
+
+            .shop-currency {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .settings-tabs {
+                flex-direction: column;
+            }
+
+            /* Hide desktop dashboard, show mobile dashboard */
+            .dashboard {
+                display: none;
+            }
+
+            .mobile-dashboard {
+                display: block;
+            }
+
+            .main-counter-section {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .user-avatar {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+
+            .user-name {
+                font-size: 1.3rem;
+            }
+
+            .user-stats {
+                gap: 10px;
+            }
+
+            .user-stat {
+                padding: 8px 12px;
+            }
+
+            .user-stat-value {
+                font-size: 1.2rem;
+            }
+
+            .mobile-main-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .mobile-quick-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-btn {
+                padding: 12px 20px;
+                font-size: 1rem;
+            }
+
+            .modal-content {
+                padding: 30px 20px;
+            }
+
+            .modal h2 {
+                font-size: 1.8rem;
+            }
+
+            .btn {
+                padding: 15px 25px;
+                font-size: 1rem;
+            }
+
+            .shop-items {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* =============================================== */
+        /* ENHANCED ICON COLORS */
+        /* =============================================== */
+        .fa-bullseye { color: var(--danger); }
+        .fa-check-circle { color: var(--success); }
+        .fa-calendar-day { color: var(--gold); }
+        .fa-star { color: var(--gold); }
+        .fa-bolt { color: var(--blue); }
+        .fa-trophy { color: var(--gold); }
+        .fa-gem { color: var(--purple); }
+        .fa-flag-checkered { color: var(--success); }
+        .fa-clock { color: var(--warning); }
+        .fa-hourglass-half { color: var(--accent-light); }
+        .fa-fire { color: var(--warning); }
+        .fa-users { color: var(--blue); }
+        .fa-cog { color: var(--text-dim); }
+        .fa-chart-line { color: var(--success); }
+        .fa-user-friends { color: var(--accent-light); }
+        .fa-chart-bar { color: var(--accent-light); }
+        .fa-shopping-bag { color: var(--shop-gold); }
+        .fa-coins { color: var(--shop-gold); }
+        .fa-medal { color: var(--shop-gold); }
+        .fa-crown { color: var(--shop-gold); }
+    </style>
+</head>
+<body>
+    <!-- Enhanced Background -->
+    <div class="animated-bg">
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+    </div>
+    
+    <div class="floating-particles" id="particles-container"></div>
+    
+    <!-- Login/Register Modal -->
+    <div class="modal" id="auth-modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-user-shield"></i> Hunter Gateway</h2>
+            <p style="color: var(--text-dim); margin-bottom: 30px; font-size: 1.2rem;">Sign in to continue your journey</p>
+            
+            <div class="login-tabs">
+                <button class="login-tab active" data-tab="signin">Sign In</button>
+                <button class="login-tab" data-tab="signup">Sign Up</button>
+            </div>
+            
+            <!-- Sign In Form -->
+            <div class="login-form active" id="signin-form">
+                <div class="email-form">
+                    <input type="email" id="signin-email" class="form-control" placeholder="Email Address">
+                    <input type="password" id="signin-password" class="form-control" placeholder="Password">
+                    <button class="btn" id="signin-email-btn">
+                        <i class="fas fa-sign-in-alt"></i> Sign In
+                    </button>
+                </div>
+                
+                <div class="error-message" id="signin-error"></div>
+                
+                <div style="text-align: center; margin: 25px 0; color: var(--text-dim);">OR</div>
+                
+                <button class="google-signin" id="google-signin">
+                    <i class="fab fa-google"></i> Sign in with Google
+                </button>
+            </div>
+            
+            <!-- Sign Up Form -->
+            <div class="login-form" id="signup-form">
+                <div class="email-form">
+                    <input type="text" id="signup-name" class="form-control" placeholder="Hunter Name">
+                    <input type="email" id="signup-email" class="form-control" placeholder="Email Address">
+                    <input type="password" id="signup-password" class="form-control" placeholder="Password (min 6 characters)">
+                    <button class="btn" id="signup-email-btn">
+                        <i class="fas fa-user-plus"></i> Create Account
+                    </button>
+                </div>
+                
+                <div class="error-message" id="signup-error"></div>
+                
+                <div style="text-align: center; margin: 25px 0; color: var(--text-dim);">OR</div>
+                
+                <button class="google-signin" id="google-signup">
+                    <i class="fab fa-google"></i> Sign up with Google
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Initializing Hunter System...</p>
+    </div>
+    
+    <div class="container" id="main-container" style="display: none;">
+        <header>
+            <div class="header-glow"></div>
+            <h1>SOLO LEVELING PRO</h1>
+            <p class="tagline">Arise and conquer your targets</p>
+        </header>
+        
+        <!-- Enhanced User Profile Section -->
+        <div class="user-info" id="user-profile">
+            <div class="user-details">
+                <div class="user-avatar" id="user-avatar">
+                    <img id="user-avatar-img" src="" alt="Profile" style="display: none;">
+                    <span id="user-avatar-text">SL</span>
+                </div>
+                <div>
+                    <div class="user-name" id="user-name-display">Hunter</div>
+                    <div class="user-level-display">Level <span id="user-level">1</span> Hunter</div>
+                </div>
+            </div>
+            <div class="user-stats">
+                <div class="user-stat">
+                    <div class="user-stat-value" id="user-targets">0</div>
+                    <div class="user-stat-label">Targets</div>
+                </div>
+                <div class="user-stat">
+                    <div class="user-stat-value" id="user-completed">0</div>
+                    <div class="user-stat-label">Completed</div>
+                </div>
+                <div class="user-stat">
+                    <div class="user-stat-value" id="user-days">14</div>
+                    <div class="user-stat-label">Days Left</div>
+                </div>
+            </div>
+            <div class="user-controls">
+                <button class="btn" id="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+        
+        <div class="app-navigation">
+            <button class="nav-btn active" data-section="dashboard">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </button>
+            <button class="nav-btn" data-section="targets">
+                <i class="fas fa-tasks"></i> Targets
+            </button>
+            <button class="nav-btn" data-section="analytics">
+                <i class="fas fa-chart-bar"></i> Analytics
+            </button>
+            <button class="nav-btn" data-section="shop">
+                <i class="fas fa-shopping-bag"></i> Shop
+            </button>
+            <button class="nav-btn" data-section="settings">
+                <i class="fas fa-cog"></i> Settings
+            </button>
+        </div>
+        
+        <!-- Dashboard Section -->
+        <div class="section-content" id="dashboard-section">
+            <div class="dashboard">
+                <div class="level-card">
+                    <div class="level-title">
+                        <i class="fas fa-trophy"></i>
+                        CURRENT LEVEL
+                    </div>
+                    <div class="level-number" id="current-level">1</div>
+                    <div class="xp-info">
+                        <div class="xp-text">
+                            <i class="fas fa-bolt"></i>
+                            <span id="xp-text">500 XP to Level 2</span>
+                        </div>
+                        <div class="xp-bar-container">
+                            <div class="xp-bar" id="xp-bar" style="width: 0%"></div>
+                        </div>
+                        <div class="xp-text">
+                            <i class="fas fa-chart-line"></i>
+                            <span id="xp-details">EXPERIENCE 0 / 500</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <div class="stat-value">
+                            <i class="fas fa-bullseye"></i>
+                            <span id="total-targets">0</span>
+                        </div>
+                        <div class="stat-label">
+                            <i class="fas fa-list"></i>
+                            TOTAL TARGETS
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">
+                            <i class="fas fa-check-circle"></i>
+                            <span id="completed-targets">0</span>
+                        </div>
+                        <div class="stat-label">
+                            <i class="fas fa-flag-checkered"></i>
+                            COMPLETED
+                        </div>
+                    </div>
+                    <div class="stat-card" id="day-counter-card">
+                        <div class="stat-value">
+                            <i class="fas fa-calendar-day"></i>
+                            <span id="day-counter">0</span>
+                        </div>
+                        <div class="stat-label">
+                            <i class="fas fa-hourglass-half"></i>
+                            DAYS UNTIL GOAL
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">
+                            <i class="fas fa-star"></i>
+                            <span id="total-xp">0</span>
+                        </div>
+                        <div class="stat-label">
+                            <i class="fas fa-gem"></i>
+                            TOTAL XP
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Counter Section -->
+            <div class="main-counter-section">
+                <div class="main-counter-card">
+                    <div class="main-counter-title">
+                        <i class="fas fa-calendar-day"></i>
+                        MAIN DAY COUNTER
+                    </div>
+                    <div class="main-counter-value" id="main-counter">14</div>
+                    <div class="main-counter-subtitle">Days until your goal</div>
+                    <div class="main-counter-date" id="main-counter-date">
+                        <i class="fas fa-flag"></i>
+                        <span id="counter-date-text">December 31, 2023</span>
+                    </div>
+                    <button class="btn" id="set-date-btn">
+                        <i class="fas fa-edit"></i> Set Target Date
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile Dashboard Section -->
+            <div class="mobile-dashboard">
+                <!-- Mobile Header -->
+                <div class="mobile-header">
+                    <div class="mobile-user-info">
+                        <div class="mobile-user-avatar" id="mobile-user-avatar">
+                            <img id="mobile-user-avatar-img" src="" alt="Profile" style="display: none;">
+                            <span id="mobile-user-avatar-text">SL</span>
+                        </div>
+                        <div class="mobile-user-details">
+                            <h3 id="mobile-user-name">Hunter</h3>
+                            <p>Level <span id="mobile-user-level">1</span> Hunter</p>
+                        </div>
+                    </div>
+                    <div class="mobile-level-display">
+                        <div class="level" id="mobile-level">1</div>
+                        <div class="label">Level</div>
+                    </div>
+                </div>
+                
+                <!-- Main Stats -->
+                <div class="mobile-main-stats">
+                    <div class="mobile-stat-card">
+                        <div class="mobile-stat-value" id="mobile-total-targets">0</div>
+                        <div class="mobile-stat-label">Total Targets</div>
+                    </div>
+                    <div class="mobile-stat-card">
+                        <div class="mobile-stat-value" id="mobile-completed-targets">0</div>
+                        <div class="mobile-stat-label">Completed</div>
+                    </div>
+                    <div class="mobile-stat-card">
+                        <div class="mobile-stat-value" id="mobile-total-xp">0</div>
+                        <div class="mobile-stat-label">Total XP</div>
+                    </div>
+                    <div class="mobile-stat-card">
+                        <div class="mobile-stat-value" id="mobile-days-left">14</div>
+                        <div class="mobile-stat-label">Days Left</div>
+                    </div>
+                </div>
+                
+                <!-- XP Progress -->
+                <div class="mobile-xp-card">
+                    <div class="mobile-xp-header">
+                        <div class="mobile-xp-title">Level Progress</div>
+                        <div class="mobile-xp-progress" id="mobile-xp-progress">0 / 500 XP</div>
+                    </div>
+                    <div class="mobile-xp-bar-container">
+                        <div class="mobile-xp-bar" id="mobile-xp-bar" style="width: 0%"></div>
+                    </div>
+                    <div class="mobile-xp-details">
+                        <span>Level <span id="mobile-current-level">1</span></span>
+                        <span>Level <span id="mobile-next-level">2</span></span>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="mobile-quick-actions">
+                    <button class="mobile-action-btn" id="mobile-add-target">
+                        <i class="fas fa-plus"></i>
+                        <span>Add Target</span>
+                    </button>
+                    <button class="mobile-action-btn" id="mobile-set-date">
+                        <i class="fas fa-calendar-day"></i>
+                        <span>Set Date</span>
+                    </button>
+                    <button class="mobile-action-btn" id="mobile-view-stats">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>View Stats</span>
+                    </button>
+                    <button class="mobile-action-btn" id="mobile-view-shop">
+                        <i class="fas fa-shopping-bag"></i>
+                        <span>Shop</span>
+                    </button>
+                </div>
+                
+                <!-- Main Counter -->
+                <div class="mobile-main-counter">
+                    <div class="mobile-counter-title">
+                        <i class="fas fa-calendar-day"></i>
+                        Main Goal
+                    </div>
+                    <div class="mobile-counter-value" id="mobile-main-counter">14</div>
+                    <div class="mobile-counter-subtitle">Days until your goal</div>
+                    <div class="mobile-counter-date" id="mobile-counter-date">
+                        <i class="fas fa-flag"></i>
+                        <span id="mobile-counter-date-text">December 31, 2023</span>
+                    </div>
+                    <button class="mobile-counter-btn" id="mobile-set-date-btn">
+                        <i class="fas fa-edit"></i> Set Target Date
+                    </button>
+                </div>
+                
+                <!-- Recent Targets -->
+                <div class="mobile-recent-targets">
+                    <div class="mobile-recent-title">
+                        <span>Recent Targets</span>
+                        <span id="mobile-targets-count">0 targets</span>
+                    </div>
+                    
+                    <div id="mobile-recent-targets-list">
+                        <div class="mobile-empty-targets">
+                            <p>No active targets yet.</p>
+                            <button class="mobile-add-target-btn" id="mobile-add-first-target">
+                                <i class="fas fa-plus"></i> Add Your First Target
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Targets Section -->
+        <div class="section-content" id="targets-section" style="display: none;">
+            <div class="targets-section">
+                <div class="section-title">
+                    <h2><i class="fas fa-tasks"></i> Active Targets</h2>
+                    <button class="btn" id="new-target-btn">
+                        <i class="fas fa-plus"></i> New Target
+                    </button>
+                </div>
+                <div class="targets-list" id="targets-list">
+                    <div class="empty-targets">
+                        <p>No active targets yet.</p>
+                        <button class="btn" id="add-first-target">
+                            <i class="fas fa-plus"></i> Add Your First Target
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Analytics Section -->
+        <div class="section-content" id="analytics-section" style="display: none;">
+            <div class="analytics-section">
+                <div class="section-title">
+                    <h2><i class="fas fa-chart-bar"></i> Work Analytics</h2>
+                    <div style="display: flex; gap: 15px;">
+                        <button class="btn" id="refresh-analytics">
+                            <i class="fas fa-sync"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+                <div class="analytics-card">
+                    <h3 style="margin-bottom: 20px; color: var(--accent-light);">
+                        <i class="fas fa-clock"></i> Daily Work Time (Last 7 Days)
+                    </h3>
+                    <div class="chart-container">
+                        <canvas id="work-time-chart"></canvas>
+                    </div>
+                    <div class="time-details" id="time-details">
+                        <h4 id="selected-day">Monday</h4>
+                        <div class="time-sessions" id="time-sessions">
+                            <!-- Work sessions will be listed here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Shop Section -->
+        <div class="section-content" id="shop-section" style="display: none;">
+            <div class="shop-section">
+                <div class="section-title">
+                    <h2><i class="fas fa-shopping-bag"></i> Hunter Shop</h2>
+                </div>
+                <div class="shop-card">
+                    <!-- Currency Balance -->
+                    <div class="shop-currency">
+                        <div class="currency-balance">
+                            <div class="currency-icon">
+                                <i class="fas fa-coins"></i>
+                            </div>
+                            <div class="currency-info">
+                                <h3>Your Balance</h3>
+                                <div class="currency-amount" id="shop-balance">12,450 XP</div>
+                            </div>
+                        </div>
+                        <div class="currency-bonuses">
+                            <div class="bonus-item">
+                                <i class="fas fa-gift"></i>
+                                <span>Daily Reward: +50 XP</span>
+                            </div>
+                            <div class="bonus-item">
+                                <i class="fas fa-fire"></i>
+                                <span>Weekly Reward: +250 XP</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Shop Categories -->
+                    <div class="shop-categories">
+                        <div class="shop-category active" data-category="all">All Items</div>
+                        <div class="shop-category" data-category="avatars">Avatars</div>
+                        <div class="shop-category" data-category="upgrades">Upgrades</div>
+                        <div class="shop-category" data-category="themes">Themes</div>
+                        <div class="shop-category" data-category="effects">Effects</div>
+                    </div>
+                    
+                    <!-- Shop Items -->
+                    <div class="shop-items" id="shop-items">
+                        <!-- Shop items will be loaded here dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Settings Section -->
+        <div class="section-content" id="settings-section" style="display: none;">
+            <div class="settings-section">
+                <div class="section-title">
+                    <h2><i class="fas fa-cog"></i> Settings</h2>
+                </div>
+                <div class="settings-card">
+                    <!-- Settings Tabs -->
+                    <div class="settings-tabs">
+                        <button class="settings-tab active" data-tab="profile">Profile</button>
+                        <button class="settings-tab" data-tab="notifications">Notifications</button>
+                        <button class="settings-tab" data-tab="appearance">Appearance</button>
+                        <button class="settings-tab" data-tab="privacy">Privacy</button>
+                        <button class="settings-tab" data-tab="advanced">Advanced</button>
+                    </div>
+                    
+                    <!-- Profile Settings -->
+                    <div class="settings-content active" id="profile-tab">
+                        <div class="settings-group">
+                            <h3><i class="fas fa-user"></i> Profile Settings</h3>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Hunter Profile</h4>
+                                    <p>Change your name and profile picture</p>
+                                </div>
+                                <button class="btn" id="change-profile-btn">
+                                    <i class="fas fa-edit"></i> Edit Profile
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-group">
+                            <h3><i class="fas fa-palette"></i> Appearance</h3>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Dark Mode</h4>
+                                    <p>Use dark theme (always enabled)</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="dark-mode" checked disabled>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Animations</h4>
+                                    <p>Enable UI animations and effects</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="animations" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Notifications Settings -->
+                    <div class="settings-content" id="notifications-tab">
+                        <div class="settings-group">
+                            <h3><i class="fas fa-bell"></i> Notifications</h3>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Browser Notifications</h4>
+                                    <p>Receive notifications in your browser</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="browser-notifications" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Sound Effects</h4>
+                                    <p>Play sounds for level ups and achievements</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="sound-effects" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Privacy Settings -->
+                    <div class="settings-content" id="privacy-tab">
+                        <div class="settings-group">
+                            <h3><i class="fas fa-shield-alt"></i> Privacy & Security</h3>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Public Profile</h4>
+                                    <p>Allow others to see your profile on leaderboard</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="public-profile" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Advanced Settings -->
+                    <div class="settings-content" id="advanced-tab">
+                        <div class="settings-group">
+                            <h3><i class="fas fa-tools"></i> Advanced Settings</h3>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Auto-save</h4>
+                                    <p>Automatically save progress every 30 seconds</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="auto-save" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-group">
+                            <h3><i class="fas fa-database"></i> Data Management</h3>
+                            <div class="modal-actions">
+                                <button class="btn btn-cancel" id="reset-data">
+                                    <i class="fas fa-trash"></i> Reset Data
+                                </button>
+                                <button class="btn" id="export-data">
+                                    <i class="fas fa-download"></i> Export Data
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Target Modal -->
+    <div class="modal" id="target-modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-bullseye"></i> Create New Target</h2>
+            <div class="form-group">
+                <label for="target-title">
+                    <i class="fas fa-heading"></i> Target Title
+                </label>
+                <input type="text" id="target-title" class="form-control" placeholder="What do you want to achieve?">
+            </div>
+            <div class="form-group">
+                <label for="target-xp">
+                    <i class="fas fa-bolt"></i> XP Reward
+                </label>
+                <input type="number" id="target-xp" class="form-control" value="50" min="10" max="500">
+                <small style="color: var(--text-dim); margin-top: 5px; display: block; margin-left: 32px;">
+                    Higher value targets give more XP (10-500)
+                </small>
+            </div>
+            <div class="form-group">
+                <label for="target-deadline">
+                    <i class="fas fa-calendar-day"></i> Deadline (Optional)
+                </label>
+                <input type="date" id="target-deadline" class="form-control">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-cancel" id="cancel-target">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="btn" id="save-target">
+                    <i class="fas fa-save"></i> Save Target
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Date Modal -->
+    <div class="modal" id="date-modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-calendar-day"></i> Set Main Day Counter</h2>
+            <div class="form-group">
+                <label for="main-date-title">
+                    <i class="fas fa-heading"></i> Goal Title
+                </label>
+                <input type="text" id="main-date-title" class="form-control" placeholder="What's your main goal?">
+            </div>
+            <div class="form-group">
+                <label for="main-target-date">
+                    <i class="fas fa-calendar"></i> Target Date
+                </label>
+                <input type="date" id="main-target-date" class="form-control">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-cancel" id="cancel-date">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="btn" id="save-date">
+                    <i class="fas fa-save"></i> Save Date
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Edit Modal -->
+    <div class="modal" id="profile-modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-user-edit"></i> Edit Hunter Profile</h2>
+            <div class="form-group">
+                <label for="profile-name">
+                    <i class="fas fa-user"></i> Hunter Name
+                </label>
+                <input type="text" id="profile-name" class="form-control" placeholder="Enter your hunter name">
+            </div>
+            <div class="form-group">
+                <label>
+                    <i class="fas fa-user-circle"></i> Profile Picture
+                </label>
+                <div class="avatar-selection">
+                    <div class="avatar-option" data-avatar="warrior">⚔️</div>
+                    <div class="avatar-option" data-avatar="mage">🧙</div>
+                    <div class="avatar-option" data-avatar="archer">🏹</div>
+                    <div class="avatar-option" data-avatar="knight">🛡️</div>
+                    <div class="avatar-option" data-avatar="ninja">🥷</div>
+                    <div class="avatar-option" data-avatar="wizard">🔮</div>
+                    <div class="avatar-option" data-avatar="berserker">⚡</div>
+                    <div class="avatar-option" data-avatar="assassin">🗡️</div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-cancel" id="cancel-profile">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="btn" id="save-profile">
+                    <i class="fas fa-save"></i> Save Profile
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Fullscreen Timer -->
+    <div class="fullscreen-timer" id="fullscreen-timer">
+        <div class="fullscreen-timer-content">
+            <h2 id="fullscreen-task-title">Task Timer</h2>
+            <div class="fullscreen-timer-display" id="fullscreen-timer-display">00:00:00</div>
+            <div class="fullscreen-timer-controls">
+                <button class="timer-btn start" id="fs-start">
+                    <i class="fas fa-play"></i> Start
+                </button>
+                <button class="timer-btn pause" id="fs-pause">
+                    <i class="fas fa-pause"></i> Pause
+                </button>
+                <button class="timer-btn reset" id="fs-reset">
+                    <i class="fas fa-undo"></i> Reset
+                </button>
+                <button class="timer-btn" id="fs-close">
+                    <i class="fas fa-times"></i> Exit
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notifications -->
+    <div class="notification" id="notification">
+        <i class="fas fa-bell" id="notification-icon"></i>
+        <div>
+            <h4 id="notification-title">Target Completed!</h4>
+            <p id="notification-message">You've earned 50 XP!</p>
+        </div>
+    </div>
+    
+    <!-- Level Up Animation -->
+    <div class="level-up" id="level-up">
+        <div class="level-up-content">
+            <h2>LEVEL UP!</h2>
+            <p>You've reached level <span id="new-level">2</span>!</p>
+            <button class="btn" id="close-level-up">
+                <i class="fas fa-arrow-right"></i> Continue
+            </button>
+        </div>
+    </div>
+
+    <!-- Achievement Badge -->
+    <div class="achievement-badge" id="achievement-badge">
+        <div class="achievement-icon">🏆</div>
+        <div class="achievement-text">
+            <h4 id="achievement-title">First Target!</h4>
+            <p id="achievement-desc">Completed your first target</p>
+        </div>
+    </div>
+
+    <!-- Sync Status -->
+    <div class="sync-status" id="sync-status">
+        <i class="fas fa-cloud" id="sync-icon"></i>
+        <span id="sync-text">Synced</span>
+    </div>
+
+    <script>
+        // ===============================================
+        // ENHANCED FIREBASE CONFIGURATION
+        // ===============================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyAR5GeVg0GGkyT6ntO-ExQ8UN6koC2NvEs",
+            authDomain: "solo-leveling-ef031.firebaseapp.com",
+            databaseURL: "https://solo-leveling-ef031-default-rtdb.firebaseio.com",
+            projectId: "solo-leveling-ef031",
+            storageBucket: "solo-leveling-ef031.firebasestorage.app",
+            messagingSenderId: "197644781407",
+            appId: "1:197644781407:web:1f22963376852ab0db18ea",
+            measurementId: "G-RVC95K5EDZ"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        // ===============================================
+        // ENHANCED APP STATE
+        // ===============================================
+        const state = {
+            level: 1,
+            currentXP: 0,
+            totalXP: 0,
+            totalTargets: 0,
+            completedTargets: 0,
+            targets: [],
+            achievements: {
+                firstTarget: false,
+                level5: false,
+                level10: false,
+                shopSpender: false,
+                dailyUser: false
+            },
+            user: {
+                name: "",
+                profilePic: "",
+                userId: "",
+                email: "",
+                publicProfile: true,
+                selectedAvatar: "warrior",
+                purchasedItems: [],
+                currency: 1250,
+                streak: 0,
+                lastLogin: null
+            },
+            mainCounter: {
+                title: "Project Deadline",
+                date: "2023-12-31",
+                daysLeft: 14
+            },
+            settings: {
+                notifications: true,
+                soundEffects: true,
+                animations: true,
+                browserNotifications: true,
+                autoSave: true
+            },
+            activeTimers: {},
+            leaderboard: [],
+            activityLog: [],
+            workSessions: {},
+            shopItems: [
+                {
+                    id: "shadow_monarch",
+                    name: "Shadow Monarch",
+                    description: "Ultimate avatar with special effects",
+                    price: 5000,
+                    category: "avatars",
+                    type: "avatar",
+                    badge: "featured",
+                    icon: "fa-user-ninja"
+                },
+                {
+                    id: "xp_doubler",
+                    name: "XP Doubler",
+                    description: "Double XP gains for 7 days",
+                    price: 2500,
+                    category: "upgrades",
+                    type: "boost",
+                    badge: "new",
+                    icon: "fa-bolt"
+                },
+                {
+                    id: "dark_theme",
+                    name: "Dark Theme",
+                    description: "Premium dark interface theme",
+                    price: 1000,
+                    category: "themes",
+                    type: "theme",
+                    badge: "popular",
+                    icon: "fa-moon"
+                },
+                {
+                    id: "warrior_avatar",
+                    name: "Warrior Avatar",
+                    description: "Basic warrior class avatar",
+                    price: 500,
+                    category: "avatars",
+                    type: "avatar",
+                    badge: "",
+                    icon: "fa-user"
+                },
+                {
+                    id: "mage_avatar",
+                    name: "Mage Avatar",
+                    description: "Magic user class avatar",
+                    price: 750,
+                    category: "avatars",
+                    type: "avatar",
+                    badge: "",
+                    icon: "fa-hat-wizard"
+                },
+                {
+                    id: "archer_avatar",
+                    name: "Archer Avatar",
+                    description: "Ranged attack class avatar",
+                    price: 750,
+                    category: "avatars",
+                    type: "avatar",
+                    badge: "",
+                    icon: "fa-bow-arrow"
+                },
+                {
+                    id: "xp_boost_1day",
+                    name: "XP Boost (1 day)",
+                    description: "+25% XP for 24 hours",
+                    price: 1000,
+                    category: "upgrades",
+                    type: "boost",
+                    badge: "",
+                    icon: "fa-rocket"
+                },
+                {
+                    id: "blue_theme",
+                    name: "Blue Theme",
+                    description: "Cool blue interface theme",
+                    price: 800,
+                    category: "themes",
+                    type: "theme",
+                    badge: "",
+                    icon: "fa-palette"
+                },
+                {
+                    id: "confetti_effect",
+                    name: "Confetti Effect",
+                    description: "Celebration animation for achievements",
+                    price: 600,
+                    category: "effects",
+                    type: "effect",
+                    badge: "",
+                    icon: "fa-party-horn"
+                }
+            ]
+        };
+
+        // ===============================================
+        // ENHANCED TIMER SYSTEM
+        // ===============================================
+        class EnhancedTaskTimer {
+            constructor(targetId) {
+                this.targetId = targetId;
+                this.seconds = 0;
+                this.running = false;
+                this.interval = null;
+                this.element = null;
+                this.startTime = null;
+                this.lastSaveTime = 0;
+            }
+            
+            start() {
+                if (this.running) return;
+                
+                this.running = true;
+                this.startTime = new Date();
+                this.interval = setInterval(() => this.update(), 1000);
+                
+                this.updateUI();
+                this.recordWorkSession(true);
+                
+                showNotification("Timer Started", "Work session started", "fas fa-play");
+            }
+            
+            pause() {
+                if (!this.running) return;
+                
+                this.running = false;
+                clearInterval(this.interval);
+                this.interval = null;
+                
+                this.updateUI();
+                this.recordWorkSession(false);
+                
+                showNotification("Timer Paused", "Work session paused", "fas fa-pause");
+            }
+            
+            reset() {
+                this.pause();
+                this.seconds = 0;
+                this.startTime = null;
+                this.updateDisplay();
+                
+                const target = state.targets.find(t => t.id === this.targetId);
+                if (target) {
+                    target.timeSpent = 0;
+                    target.progress = 0;
+                    saveState();
+                    updateTargetUI(target);
+                }
+                
+                showNotification("Timer Reset", "Timer has been reset", "fas fa-undo");
+            }
+            
+            update() {
+                this.seconds++;
+                this.updateDisplay();
+                
+                const target = state.targets.find(t => t.id === this.targetId);
+                if (target) {
+                    target.timeSpent = this.seconds;
+                    
+                    // Calculate progress based on time spent (2 hours = 100% for demo)
+                    target.progress = Math.min(100, (this.seconds / 7200) * 100);
+                    
+                    // Auto-save every 30 seconds
+                    if (this.seconds - this.lastSaveTime >= 30) {
+                        this.lastSaveTime = this.seconds;
+                        saveState();
+                    }
+                    
+                    updateTargetUI(target);
+                }
+            }
+            
+            updateDisplay() {
+                if (this.element) {
+                    this.element.querySelector('.target-timer').textContent = this.formatTime(this.seconds);
+                }
+                
+                if (document.getElementById('fullscreen-timer').classList.contains('active') && 
+                    document.getElementById('fullscreen-timer').dataset.targetId === this.targetId) {
+                    document.getElementById('fullscreen-timer-display').textContent = this.formatTime(this.seconds);
+                }
+            }
+            
+            updateUI() {
+                if (!this.element) return;
+                
+                const startBtn = this.element.querySelector('.timer-btn.start');
+                const pauseBtn = this.element.querySelector('.timer-btn.pause');
+                
+                if (this.running) {
+                    startBtn.style.display = 'none';
+                    pauseBtn.style.display = 'flex';
+                } else {
+                    startBtn.style.display = 'flex';
+                    pauseBtn.style.display = 'none';
+                }
+            }
+            
+            formatTime(seconds) {
+                const hrs = Math.floor(seconds / 3600);
+                const mins = Math.floor((seconds % 3600) / 60);
+                const secs = seconds % 60;
+                return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }
+            
+            recordWorkSession(start) {
+                const now = new Date();
+                const today = now.toISOString().split('T')[0];
+                const timeStr = now.toTimeString().split(' ')[0];
+                
+                if (!state.workSessions[today]) {
+                    state.workSessions[today] = [];
+                }
+                
+                const target = state.targets.find(t => t.id === this.targetId);
+                if (!target) return;
+                
+                if (start) {
+                    // Start new session
+                    state.workSessions[today].push({
+                        targetId: this.targetId,
+                        targetName: target.title,
+                        start: timeStr,
+                        end: null,
+                        date: today
+                    });
+                } else {
+                    // Find and update existing session
+                    const sessions = state.workSessions[today];
+                    for (let i = sessions.length - 1; i >= 0; i--) {
+                        if (sessions[i].targetId === this.targetId && !sessions[i].end) {
+                            sessions[i].end = timeStr;
+                            
+                            // Calculate duration
+                            const startTime = sessions[i].start.split(':').map(Number);
+                            const endTime = timeStr.split(':').map(Number);
+                            
+                            const startSeconds = startTime[0] * 3600 + startTime[1] * 60 + startTime[2];
+                            const endSeconds = endTime[0] * 3600 + endTime[1] * 60 + endTime[2];
+                            
+                            sessions[i].duration = endSeconds - startSeconds;
+                            break;
+                        }
+                    }
+                }
+                
+                saveState();
+            }
+        }
+
+        // ===============================================
+        // ENHANCED UTILITY FUNCTIONS
+        // ===============================================
+        function formatTime(seconds) {
+            const hrs = Math.floor(seconds / 3600);
+            const mins = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function formatTimeShort(seconds) {
+            const hrs = Math.floor(seconds / 3600);
+            const mins = Math.floor((seconds % 3600) / 60);
+            return `${hrs}h ${mins}m`;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+        }
+
+        function getDaysUntilDeadline(deadline) {
+            if (!deadline) return null;
+            const now = new Date();
+            const deadlineDate = new Date(deadline);
+            const timeDiff = deadlineDate.getTime() - now.getTime();
+            return Math.ceil(timeDiff / (1000 * 3600 * 24));
+        }
+
+        function calculateXPNeeded() {
+            return state.level * 500;
+        }
+
+        function showNotification(title, message, icon) {
+            const notification = document.getElementById('notification');
+            document.getElementById('notification-title').textContent = title;
+            document.getElementById('notification-message').textContent = message;
+            document.getElementById('notification-icon').className = icon;
+            
+            notification.classList.add('show');
+            
+            if (navigator.vibrate && state.settings.soundEffects) {
+                navigator.vibrate(200);
+            }
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function createParticles() {
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.animationDelay = `${Math.random() * 15}s`;
+                particle.style.width = `${Math.random() * 4 + 2}px`;
+                particle.style.height = particle.style.width;
+                document.getElementById('particles-container').appendChild(particle);
+            }
+        }
+
+        function createConfetti() {
+            const colors = ['#4a00e0', '#8e2de2', '#00ff88', '#ff0080', '#ffff00'];
+            
+            for (let i = 0; i < 150; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.classList.add('confetti');
+                    confetti.style.left = `${Math.random() * 100}%`;
+                    confetti.style.top = '-10px';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = `${Math.random() * 5}s`;
+                    confetti.style.width = `${Math.random() * 12 + 6}px`;
+                    confetti.style.height = `${Math.random() * 12 + 6}px`;
+                    
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 5000);
+                }, i * 30);
+            }
+        }
+
+        // ===============================================
+        // ENHANCED TARGET MANAGEMENT
+        // ===============================================
+        function createTarget(title, xp, deadline) {
+            const newTarget = {
+                id: Date.now().toString(),
+                title: title,
+                xp: parseInt(xp),
+                deadline: deadline,
+                timeSpent: 0,
+                progress: 0,
+                createdAt: new Date().toISOString(),
+                completed: false
+            };
+            
+            state.targets.push(newTarget);
+            state.totalTargets++;
+            saveState();
+            renderTarget(newTarget);
+            
+            showNotification('Target Added', `"${title}" has been added`, 'fas fa-bullseye');
+            
+            // Check for first target achievement
+            if (state.totalTargets === 1 && !state.achievements.firstTarget) {
+                state.achievements.firstTarget = true;
+                showAchievement('First Target!', 'Completed your first target');
+                awardCurrency(100);
+            }
+        }
+
+        function completeTarget(targetId) {
+            const targetIndex = state.targets.findIndex(t => t.id === targetId);
+            if (targetIndex === -1) return;
+            
+            const target = state.targets[targetIndex];
+            
+            // Stop timer if running
+            if (state.activeTimers[targetId]) {
+                state.activeTimers[targetId].pause();
+                delete state.activeTimers[targetId];
+            }
+            
+            // Award XP
+            const xpGained = target.xp;
+            state.currentXP += xpGained;
+            state.totalXP += xpGained;
+            state.completedTargets++;
+            
+            // Award currency (10% of XP)
+            awardCurrency(Math.floor(xpGained * 0.1));
+            
+            // Check for level up
+            const xpNeeded = calculateXPNeeded();
+            if (state.currentXP >= xpNeeded) {
+                levelUp();
+            }
+            
+            // Mark as completed and remove from active targets
+            target.completed = true;
+            state.targets.splice(targetIndex, 1);
+            saveState();
+            
+            // Animate completion
+            const targetElement = document.querySelector(`.target-item[data-id="${targetId}"]`);
+            if (targetElement) {
+                targetElement.classList.add('completed');
+                setTimeout(() => {
+                    targetElement.style.opacity = '0';
+                    targetElement.style.transform = 'translateX(100px)';
+                    setTimeout(() => {
+                        targetElement.remove();
+                        updateUI();
+                    }, 500);
+                }, 1000);
+            }
+            
+            showNotification('Target Completed!', `You earned ${xpGained} XP!`, 'fas fa-check-circle');
+        }
+
+        function deleteTarget(targetId) {
+            const targetIndex = state.targets.findIndex(t => t.id === targetId);
+            if (targetIndex === -1) return;
+            
+            const target = state.targets[targetIndex];
+            
+            // Stop timer if running
+            if (state.activeTimers[targetId]) {
+                state.activeTimers[targetId].pause();
+                delete state.activeTimers[targetId];
+            }
+            
+            state.targets.splice(targetIndex, 1);
+            saveState();
+            
+            const targetElement = document.querySelector(`.target-item[data-id="${targetId}"]`);
+            if (targetElement) {
+                targetElement.style.opacity = '0';
+                setTimeout(() => {
+                    targetElement.remove();
+                    updateUI();
+                }, 500);
+            }
+            
+            showNotification('Target Deleted', `"${target.title}" removed`, 'fas fa-trash');
+        }
+
+        // ===============================================
+        // ENHANCED RENDERING FUNCTIONS
+        // ===============================================
+        function renderTarget(target) {
+            const targetElement = document.createElement('div');
+            targetElement.className = 'target-item';
+            targetElement.dataset.id = target.id;
+            
+            const deadlineText = target.deadline ? 
+                `<p class="target-timer"><i class="fas fa-clock"></i> Due: ${formatDate(target.deadline)} (${getDaysUntilDeadline(target.deadline)} days left)</p>` : '';
+            
+            const timeSpent = target.timeSpent || 0;
+            const timer = state.activeTimers[target.id];
+            const isRunning = timer && timer.running;
+            
+            targetElement.innerHTML = `
+                <div class="target-info">
+                    <h3><i class="fas fa-bullseye"></i> ${target.title}</h3>
+                    <p><i class="fas fa-bolt"></i> ${target.xp} XP</p>
+                    ${deadlineText}
+                    <div class="timer-container">
+                        <div class="timer-display">${formatTime(timeSpent)}</div>
+                        <button class="timer-btn start ${isRunning ? 'hidden' : ''}" data-action="start" data-target="${target.id}">
+                            <i class="fas fa-play"></i> Start
+                        </button>
+                        <button class="timer-btn pause ${isRunning ? '' : 'hidden'}" data-action="pause" data-target="${target.id}">
+                            <i class="fas fa-pause"></i> Pause
+                        </button>
+                        <button class="timer-btn reset" data-action="reset" data-target="${target.id}">
+                            <i class="fas fa-undo"></i> Reset
+                        </button>
+                        <button class="timer-btn fullscreen" data-action="fullscreen" data-target="${target.id}">
+                            <i class="fas fa-expand"></i> Fullscreen
+                        </button>
+                    </div>
+                </div>
+                <div class="target-actions">
+                    <button class="btn-complete complete-target" data-target="${target.id}">
+                        <i class="fas fa-check"></i> Complete
+                    </button>
+                    <button class="btn-delete delete-target" data-target="${target.id}">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('targets-list').prepend(targetElement);
+            
+            // Initialize timer
+            if (!state.activeTimers[target.id]) {
+                state.activeTimers[target.id] = new EnhancedTaskTimer(target.id);
+            }
+            const timerObj = state.activeTimers[target.id];
+            timerObj.element = targetElement;
+            timerObj.seconds = target.timeSpent;
+            timerObj.updateDisplay();
+            timerObj.updateUI();
+            
+            // Add event listeners
+            targetElement.querySelector('.complete-target').addEventListener('click', () => completeTarget(target.id));
+            targetElement.querySelector('.delete-target').addEventListener('click', () => deleteTarget(target.id));
+            
+            const timerBtns = targetElement.querySelectorAll('.timer-btn');
+            timerBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const action = this.dataset.action;
+                    const targetId = this.dataset.target;
+                    
+                    switch(action) {
+                        case 'start':
+                            state.activeTimers[targetId].start();
+                            break;
+                        case 'pause':
+                            state.activeTimers[targetId].pause();
+                            break;
+                        case 'reset':
+                            state.activeTimers[targetId].reset();
+                            break;
+                        case 'fullscreen':
+                            openFullscreenTimer(targetId);
+                            break;
+                    }
+                });
+            });
+        }
+
+        function renderAllTargets() {
+            const targetsList = document.getElementById('targets-list');
+            targetsList.innerHTML = '';
+            
+            if (state.targets.length === 0) {
+                targetsList.innerHTML = `
+                    <div class="empty-targets">
+                        <p>No active targets yet.</p>
+                        <button class="btn" id="add-first-target">
+                            <i class="fas fa-plus"></i> Add Your First Target
+                        </button>
+                    </div>
+                `;
+                document.getElementById('add-first-target').addEventListener('click', showTargetModal);
+                return;
+            }
+            
+            state.targets.forEach(target => renderTarget(target));
+        }
+
+        function renderMobileTargets() {
+            const mobileTargetsList = document.getElementById('mobile-recent-targets-list');
+            mobileTargetsList.innerHTML = '';
+            
+            if (state.targets.length === 0) {
+                mobileTargetsList.innerHTML = `
+                    <div class="mobile-empty-targets">
+                        <p>No active targets yet.</p>
+                        <button class="mobile-add-target-btn" id="mobile-add-first-target">
+                            <i class="fas fa-plus"></i> Add Your First Target
+                        </button>
+                    </div>
+                `;
+                document.getElementById('mobile-add-first-target').addEventListener('click', showTargetModal);
+                return;
+            }
+            
+            // Show only the first 3 targets for mobile
+            const recentTargets = state.targets.slice(0, 3);
+            
+            recentTargets.forEach(target => {
+                const timeSpent = target.timeSpent || 0;
+                const timer = state.activeTimers[target.id];
+                const isRunning = timer && timer.running;
+                
+                // Calculate progress percentage
+                const progress = Math.min(100, (timeSpent / 7200) * 100); // 2 hours = 100%
+                
+                const targetElement = document.createElement('div');
+                targetElement.className = 'mobile-target-item';
+                targetElement.dataset.id = target.id;
+                targetElement.innerHTML = `
+                    <div class="mobile-target-header">
+                        <div class="mobile-target-name">${target.title}</div>
+                        <div class="mobile-target-xp">${target.xp} XP</div>
+                    </div>
+                    <div class="mobile-target-progress">
+                        <div class="mobile-target-progress-bar" style="width: ${progress}%"></div>
+                    </div>
+                    <div class="mobile-target-time">
+                        <i class="fas fa-clock"></i>
+                        <span>${formatTime(timeSpent)}</span>
+                    </div>
+                    <div class="mobile-target-actions">
+                        <button class="mobile-target-btn start" data-action="start" data-target="${target.id}">
+                            <i class="fas fa-play"></i> ${isRunning ? 'Running' : 'Start'}
+                        </button>
+                        <button class="mobile-target-btn complete" data-action="complete" data-target="${target.id}">
+                            <i class="fas fa-check"></i> Complete
+                        </button>
+                    </div>
+                `;
+                
+                mobileTargetsList.appendChild(targetElement);
+                
+                // Add event listeners
+                const buttons = targetElement.querySelectorAll('.mobile-target-btn');
+                buttons.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const action = this.dataset.action;
+                        const targetId = this.dataset.target;
+                        
+                        if (action === 'start') {
+                            if (state.activeTimers[targetId]) {
+                                if (state.activeTimers[targetId].running) {
+                                    state.activeTimers[targetId].pause();
+                                    this.innerHTML = '<i class="fas fa-play"></i> Start';
+                                } else {
+                                    state.activeTimers[targetId].start();
+                                    this.innerHTML = '<i class="fas fa-play"></i> Running';
+                                }
+                            }
+                        } else if (action === 'complete') {
+                            completeTarget(targetId);
+                        }
+                    });
+                });
+            });
+            
+            // Add "View All" button if there are more than 3 targets
+            if (state.targets.length > 3) {
+                const viewAllBtn = document.createElement('button');
+                viewAllBtn.className = 'mobile-add-target-btn';
+                viewAllBtn.id = 'mobile-view-all-targets';
+                viewAllBtn.style.marginTop = '15px';
+                viewAllBtn.innerHTML = `<i class="fas fa-list"></i> View All ${state.targets.length} Targets`;
+                viewAllBtn.addEventListener('click', () => switchSection('targets'));
+                mobileTargetsList.appendChild(viewAllBtn);
+            }
+        }
+
+        function updateTargetUI(target) {
+            const targetElement = document.querySelector(`.target-item[data-id="${target.id}"]`);
+            if (!targetElement) return;
+            
+            targetElement.querySelector('.target-time').textContent = formatTimeShort(target.timeSpent);
+            
+            const progressBar = targetElement.querySelector('.target-progress');
+            if (progressBar) {
+                progressBar.style.width = `${target.progress}%`;
+            }
+            
+            const progressText = targetElement.querySelector('.target-progress-text');
+            if (progressText) {
+                progressText.textContent = `${Math.round(target.progress)}%`;
+            }
+        }
+
+        // ===============================================
+        // ENHANCED SHOP SYSTEM
+        // ===============================================
+        function renderShopItems(category = 'all') {
+            const shopItemsContainer = document.getElementById('shop-items');
+            shopItemsContainer.innerHTML = '';
+            
+            const filteredItems = category === 'all' 
+                ? state.shopItems 
+                : state.shopItems.filter(item => item.category === category);
+            
+            if (filteredItems.length === 0) {
+                shopItemsContainer.innerHTML = `
+                    <div class="empty-targets">
+                        <p>No items available in this category.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            filteredItems.forEach(item => {
+                const isPurchased = state.user.purchasedItems.includes(item.id);
+                const canAfford = state.user.currency >= item.price;
+                
+                const shopItemElement = document.createElement('div');
+                shopItemElement.className = 'shop-item';
+                shopItemElement.innerHTML = `
+                    ${item.badge ? `<div class="item-badge badge-${item.badge}">${item.badge.toUpperCase()}</div>` : ''}
+                    <div class="item-image">
+                        <i class="fas ${item.icon}"></i>
+                    </div>
+                    <div class="item-info">
+                        <h4>${item.name}</h4>
+                        <p>${item.description}</p>
+                    </div>
+                    <div class="item-price">
+                        <div class="price-amount">
+                            <i class="fas fa-coins price-icon"></i>
+                            <span>${item.price}</span>
+                        </div>
+                        ${isPurchased ? '<span class="purchased-badge">OWNED</span>' : ''}
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn-buy ${isPurchased ? 'owned' : ''} ${!canAfford && !isPurchased ? 'disabled' : ''}" 
+                                data-item="${item.id}" ${isPurchased || !canAfford ? 'disabled' : ''}>
+                            <i class="fas ${isPurchased ? 'fa-check' : 'fa-shopping-cart'}"></i>
+                            ${isPurchased ? 'Owned' : (canAfford ? 'Buy' : 'Need More XP')}
+                        </button>
+                        <button class="btn-preview" data-item="${item.id}">
+                            <i class="fas fa-eye"></i> Preview
+                        </button>
+                    </div>
+                `;
+                
+                shopItemsContainer.appendChild(shopItemElement);
+            });
+            
+            // Add event listeners
+            shopItemsContainer.querySelectorAll('.btn-buy:not(.owned):not(.disabled)').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const itemId = this.dataset.item;
+                    purchaseItem(itemId);
+                });
+            });
+            
+            shopItemsContainer.querySelectorAll('.btn-preview').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const itemId = this.dataset.item;
+                    previewItem(itemId);
+                });
+            });
+        }
+
+        function purchaseItem(itemId) {
+            const item = state.shopItems.find(i => i.id === itemId);
+            if (!item) return;
+            
+            if (state.user.purchasedItems.includes(itemId)) {
+                showNotification('Already Owned', 'You already own this item', 'fas fa-exclamation-triangle');
+                return;
+            }
+            
+            if (state.user.currency < item.price) {
+                showNotification('Insufficient Funds', `You need ${item.price - state.user.currency} more XP`, 'fas fa-times-circle');
+                return;
+            }
+            
+            // Process purchase
+            state.user.currency -= item.price;
+            state.user.purchasedItems.push(itemId);
+            
+            // Apply item effects
+            applyItemEffect(item);
+            
+            saveState();
+            updateUI();
+            renderShopItems();
+            
+            showNotification('Purchase Successful', `You bought ${item.name}!`, 'fas fa-shopping-bag');
+            
+            // Check for shop achievement
+            if (state.user.purchasedItems.length >= 3 && !state.achievements.shopSpender) {
+                state.achievements.shopSpender = true;
+                showAchievement('Shop Spender!', 'Purchased 3 items from the shop');
+                awardCurrency(200);
+            }
+        }
+
+        function applyItemEffect(item) {
+            switch(item.type) {
+                case 'avatar':
+                    // Avatar changes are handled in the profile
+                    showNotification('Avatar Unlocked', `${item.name} is now available in your profile`, 'fas fa-user');
+                    break;
+                case 'boost':
+                    showNotification('Boost Activated', `${item.name} is now active`, 'fas fa-bolt');
+                    // Boost logic would be implemented here
+                    break;
+                case 'theme':
+                    showNotification('Theme Applied', `${item.name} has been applied`, 'fas fa-palette');
+                    // Theme logic would be implemented here
+                    break;
+                case 'effect':
+                    showNotification('Effect Unlocked', `${item.name} is now available`, 'fas fa-magic');
+                    // Effect logic would be implemented here
+                    break;
+            }
+        }
+
+        function awardCurrency(amount) {
+            state.user.currency += amount;
+            showNotification('Currency Awarded', `+${amount} XP`, 'fas fa-coins');
+            saveState();
+            updateUI();
+        }
+
+        // ===============================================
+        // ENHANCED UI UPDATES
+        // ===============================================
+        function updateUI() {
+            // User info
+            document.getElementById('user-name-display').textContent = state.user.name;
+            document.getElementById('user-level').textContent = state.level;
+            document.getElementById('user-targets').textContent = state.totalTargets;
+            document.getElementById('user-completed').textContent = state.completedTargets;
+            document.getElementById('user-days').textContent = state.mainCounter.daysLeft;
+            
+            // Dashboard stats
+            document.getElementById('current-level').textContent = state.level;
+            document.getElementById('total-targets').textContent = state.totalTargets;
+            document.getElementById('completed-targets').textContent = state.completedTargets;
+            document.getElementById('total-xp').textContent = state.totalXP;
+            document.getElementById('day-counter').textContent = state.mainCounter.daysLeft;
+            
+            // XP progress
+            const xpNeeded = calculateXPNeeded();
+            const xpPercent = Math.min(100, (state.currentXP / xpNeeded) * 100);
+            
+            document.getElementById('xp-text').textContent = `${xpNeeded - state.currentXP} XP to Level ${state.level + 1}`;
+            document.getElementById('xp-bar').style.width = `${xpPercent}%`;
+            document.getElementById('xp-details').textContent = `EXPERIENCE ${state.currentXP} / ${xpNeeded}`;
+            
+            // Main counter
+            updateMainCounter();
+            
+            // Mobile dashboard
+            document.getElementById('mobile-user-name').textContent = state.user.name;
+            document.getElementById('mobile-user-level').textContent = state.level;
+            document.getElementById('mobile-level').textContent = state.level;
+            document.getElementById('mobile-total-targets').textContent = state.totalTargets;
+            document.getElementById('mobile-completed-targets').textContent = state.completedTargets;
+            document.getElementById('mobile-total-xp').textContent = state.totalXP;
+            document.getElementById('mobile-days-left').textContent = state.mainCounter.daysLeft;
+            
+            document.getElementById('mobile-xp-progress').textContent = `${state.currentXP} / ${xpNeeded} XP`;
+            document.getElementById('mobile-xp-bar').style.width = `${xpPercent}%`;
+            document.getElementById('mobile-current-level').textContent = state.level;
+            document.getElementById('mobile-next-level').textContent = state.level + 1;
+            document.getElementById('mobile-targets-count').textContent = `${state.targets.length} target${state.targets.length !== 1 ? 's' : ''}`;
+            
+            // Shop
+            document.getElementById('shop-balance').textContent = `${state.user.currency} XP`;
+            
+            // Render targets
+            renderAllTargets();
+            renderMobileTargets();
+            
+            // Update settings toggles
+            document.getElementById('browser-notifications').checked = state.settings.browserNotifications;
+            document.getElementById('sound-effects').checked = state.settings.soundEffects;
+            document.getElementById('animations').checked = state.settings.animations;
+            document.getElementById('public-profile').checked = state.user.publicProfile;
+            document.getElementById('auto-save').checked = state.settings.autoSave;
+        }
+
+        function updateMainCounter() {
+            if (!state.mainCounter.date) return;
+            
+            const targetDate = new Date(state.mainCounter.date);
+            const today = new Date();
+            const timeDiff = targetDate.getTime() - today.getTime();
+            const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            
+            state.mainCounter.daysLeft = daysLeft >= 0 ? daysLeft : 0;
+            
+            const mainCounter = document.getElementById('main-counter');
+            const mobileMainCounter = document.getElementById('mobile-main-counter');
+            
+            mainCounter.textContent = state.mainCounter.daysLeft;
+            mobileMainCounter.textContent = state.mainCounter.daysLeft;
+            
+            const counterDateText = document.getElementById('counter-date-text');
+            const mobileCounterDateText = document.getElementById('mobile-counter-date-text');
+            
+            if (state.mainCounter.daysLeft > 0) {
+                counterDateText.textContent = `${state.mainCounter.title}: ${formatDate(state.mainCounter.date)}`;
+                mobileCounterDateText.textContent = `${state.mainCounter.title}: ${formatDate(state.mainCounter.date)}`;
+            } else {
+                counterDateText.textContent = `${state.mainCounter.title} has passed`;
+                mobileCounterDateText.textContent = `${state.mainCounter.title} has passed`;
+            }
+            
+            // Color coding
+            if (state.mainCounter.daysLeft <= 3) {
+                mainCounter.style.color = 'var(--danger)';
+                mobileMainCounter.style.color = 'var(--danger)';
+            } else if (state.mainCounter.daysLeft <= 7) {
+                mainCounter.style.color = 'var(--warning)';
+                mobileMainCounter.style.color = 'var(--warning)';
+            } else {
+                mainCounter.style.color = 'var(--gold)';
+                mobileMainCounter.style.color = 'var(--gold)';
+            }
+        }
+
+        // ===============================================
+        // ENHANCED LEVEL & ACHIEVEMENT SYSTEM
+        // ===============================================
+        function levelUp() {
+            const xpNeeded = calculateXPNeeded();
+            
+            while (state.currentXP >= xpNeeded) {
+                state.currentXP -= xpNeeded;
+                state.level++;
+                
+                // Show level up animation
+                showLevelUpAnimation(state.level);
+                
+                // Award currency for level up
+                awardCurrency(state.level * 100);
+                
+                // Check for level-based achievements
+                if (state.level >= 5 && !state.achievements.level5) {
+                    state.achievements.level5 = true;
+                    showAchievement('Level 5 Reached!', 'You\'re getting stronger!');
+                    awardCurrency(250);
+                }
+                
+                if (state.level >= 10 && !state.achievements.level10) {
+                    state.achievements.level10 = true;
+                    showAchievement('Level 10 Reached!', 'You\'re a true hunter now!');
+                    awardCurrency(500);
+                }
+            }
+            
+            saveState();
+        }
+
+        function showLevelUpAnimation(newLevel) {
+            const levelUpDiv = document.getElementById('level-up');
+            document.getElementById('new-level').textContent = newLevel;
+            levelUpDiv.classList.add('show');
+            createConfetti();
+        }
+
+        function showAchievement(title, description) {
+            const achievementBadge = document.getElementById('achievement-badge');
+            document.getElementById('achievement-title').textContent = title;
+            document.getElementById('achievement-desc').textContent = description;
+            achievementBadge.classList.add('show');
+            
+            setTimeout(() => {
+                achievementBadge.classList.remove('show');
+            }, 5000);
+        }
+
+        // ===============================================
+        // ENHANCED ANALYTICS
+        // ===============================================
+        function renderWorkTimeChart() {
+            const ctx = document.getElementById('work-time-chart').getContext('2d');
+            
+            // Get last 7 days
+            const days = [];
+            const workTimes = [];
+            
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                const dateString = date.toISOString().split('T')[0];
+                days.push(date.toLocaleDateString('en-US', { weekday: 'short' }));
+                
+                // Calculate total work time for this day
+                let totalSeconds = 0;
+                if (state.workSessions[dateString]) {
+                    state.workSessions[dateString].forEach(session => {
+                        if (session.duration) {
+                            totalSeconds += session.duration;
+                        }
+                    });
+                }
+                
+                workTimes.push(totalSeconds / 3600); // Convert to hours
+            }
+            
+            // Destroy existing chart if it exists
+            if (window.workTimeChartInstance) {
+                window.workTimeChartInstance.destroy();
+            }
+            
+            // Create new chart
+            window.workTimeChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: days,
+                    datasets: [{
+                        label: 'Work Time (hours)',
+                        data: workTimes,
+                        backgroundColor: 'rgba(138, 43, 226, 0.7)',
+                        borderColor: 'rgba(138, 43, 226, 1)',
+                        borderWidth: 2,
+                        borderRadius: 8,
+                        borderSkipped: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                callback: function(value) {
+                                    return value + 'h';
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'rgba(255, 255, 255, 0.7)'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Work Time: ${context.parsed.y.toFixed(2)} hours`;
+                                }
+                            }
+                        }
+                    },
+                    onClick: function(evt, elements) {
+                        if (elements.length > 0) {
+                            const index = elements[0].index;
+                            const day = days[index];
+                            showWorkSessions(day, index);
+                        }
+                    }
+                }
+            });
+        }
+
+        function showWorkSessions(day, index) {
+            // Calculate the date for the selected day
+            const date = new Date();
+            date.setDate(date.getDate() - (6 - index));
+            const dateString = date.toISOString().split('T')[0];
+            
+            document.getElementById('selected-day').textContent = `${day} - ${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+            
+            let sessionsHTML = '';
+            if (state.workSessions[dateString] && state.workSessions[dateString].length > 0) {
+                state.workSessions[dateString].forEach((session, i) => {
+                    const target = state.targets.find(t => t.id === session.targetId) || { title: 'Unknown Target' };
+                    const targetName = target.title;
+                    
+                    let duration = 'In progress';
+                    if (session.duration) {
+                        duration = formatTimeShort(session.duration);
+                    }
+                    
+                    sessionsHTML += `
+                        <div class="time-session">
+                            <div>
+                                <strong>${targetName}</strong>
+                                <div>${session.start} - ${session.end || 'Now'}</div>
+                            </div>
+                            <div>${duration}</div>
+                        </div>
+                    `;
+                });
+            } else {
+                sessionsHTML = `<p>No work sessions recorded for this day.</p>`;
+            }
+            
+            document.getElementById('time-sessions').innerHTML = sessionsHTML;
+            document.getElementById('time-details').classList.add('active');
+        }
+
+        // ===============================================
+        // ENHANCED FIREBASE INTEGRATION
+        // ===============================================
+        function saveState() {
+            if (!state.settings.autoSave) return;
+            
+            updateSyncStatus('syncing', 'Saving...');
+            
+            const user = auth.currentUser;
+            if (user) {
+                database.ref('users/' + user.uid).set(state)
+                    .then(() => {
+                        updateSyncStatus('synced', 'Synced');
+                        
+                        setTimeout(() => {
+                            if (document.getElementById('sync-status').className.includes('synced')) {
+                                updateSyncStatus('synced', 'Synced');
+                            }
+                        }, 3000);
+                    })
+                    .catch((error) => {
+                        console.error('Error saving to Firebase:', error);
+                        updateSyncStatus('error', 'Sync failed');
+                    });
+            }
+        }
+
+        function loadState() {
+            updateSyncStatus('syncing', 'Loading...');
+            
+            const user = auth.currentUser;
+            if (user) {
+                database.ref('users/' + user.uid).once('value')
+                    .then((snapshot) => {
+                        if (snapshot.exists()) {
+                            const data = snapshot.val();
+                            
+                            // Preserve active timers
+                            const currentTimers = { ...state.activeTimers };
+                            
+                            // Update state with loaded data
+                            Object.assign(state, data);
+                            
+                            // Restore active timers
+                            state.activeTimers = currentTimers;
+                            
+                            // Check for daily login bonus
+                            checkDailyBonus();
+                            
+                            updateSyncStatus('synced', 'Data loaded');
+                        } else {
+                            // Initialize new user data
+                            state.user.userId = user.uid;
+                            state.user.name = user.displayName || "Hunter";
+                            state.user.email = user.email || "";
+                            state.user.profilePic = user.photoURL || "";
+                            state.user.lastLogin = new Date().toISOString().split('T')[0];
+                            saveState();
+                            updateSyncStatus('synced', 'New profile created');
+                        }
+                        
+                        updateUI();
+                        renderShopItems();
+                    })
+                    .catch((error) => {
+                        console.error('Error loading from Firebase:', error);
+                        updateSyncStatus('error', 'Load failed');
+                    });
+            }
+        }
+
+        function checkDailyBonus() {
+            const today = new Date().toISOString().split('T')[0];
+            
+            if (state.user.lastLogin !== today) {
+                // Award daily bonus
+                awardCurrency(50);
+                state.user.streak++;
+                state.user.lastLogin = today;
+                
+                if (state.user.streak >= 3 && !state.achievements.dailyUser) {
+                    state.achievements.dailyUser = true;
+                    showAchievement('Daily User!', 'Logged in for 3 consecutive days');
+                    awardCurrency(150);
+                }
+                
+                saveState();
+                showNotification('Daily Bonus', '+50 XP for logging in today!', 'fas fa-gift');
+            }
+        }
+
+        function updateSyncStatus(status, message) {
+            const syncStatus = document.getElementById('sync-status');
+            syncStatus.className = 'sync-status ' + status;
+            document.getElementById('sync-icon').className = status === 'syncing' ? 'fas fa-sync fa-spin' : 
+                                          status === 'error' ? 'fas fa-exclamation-triangle' : 
+                                          'fas fa-cloud';
+            document.getElementById('sync-text').textContent = message;
+        }
+
+        // ===============================================
+        // ENHANCED AUTHENTICATION
+        // ===============================================
+        function signInWithGoogle() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider)
+                .then((result) => {
+                    const user = result.user;
+                    hideAuthModal();
+                    showMainUI();
+                    loadState();
+                })
+                .catch((error) => {
+                    const errorMessage = error.message;
+                    showNotification('Login Failed', errorMessage, 'fas fa-exclamation-triangle');
+                });
+        }
+
+        function signInWithEmail() {
+            const email = document.getElementById('signin-email').value;
+            const password = document.getElementById('signin-password').value;
+            
+            if (!email || !password) {
+                showError('signin-error', 'Please enter both email and password');
+                return;
+            }
+            
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    hideAuthModal();
+                    showMainUI();
+                    loadState();
+                })
+                .catch((error) => {
+                    const errorMessage = error.message;
+                    showError('signin-error', errorMessage);
+                });
+        }
+
+        function signUpWithEmail() {
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            
+            if (!name || !email || !password) {
+                showError('signup-error', 'Please fill in all fields');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showError('signup-error', 'Password must be at least 6 characters');
+                return;
+            }
+            
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    
+                    return user.updateProfile({
+                        displayName: name
+                    }).then(() => {
+                        hideAuthModal();
+                        showMainUI();
+                        loadState();
+                    });
+                })
+                .catch((error) => {
+                    const errorMessage = error.message;
+                    showError('signup-error', errorMessage);
+                });
+        }
+
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            
+            setTimeout(() => {
+                errorElement.style.display = 'none';
+            }, 5000);
+        }
+
+        function logoutUser() {
+            // Stop all active timers
+            Object.keys(state.activeTimers).forEach(targetId => {
+                const timer = state.activeTimers[targetId];
+                if (timer && timer.interval) {
+                    clearInterval(timer.interval);
+                }
+            });
+            
+            state.activeTimers = {};
+            
+            auth.signOut().then(() => {
+                // Reset to initial state
+                Object.keys(state).forEach(key => {
+                    if (key !== 'activeTimers') {
+                        if (typeof state[key] === 'object' && state[key] !== null) {
+                            state[key] = {};
+                        } else {
+                            state[key] = null;
+                        }
+                    }
+                });
+                
+                // Reset to default values
+                state.level = 1;
+                state.currentXP = 0;
+                state.totalXP = 0;
+                state.totalTargets = 0;
+                state.completedTargets = 0;
+                state.targets = [];
+                state.achievements = {
+                    firstTarget: false,
+                    level5: false,
+                    level10: false,
+                    shopSpender: false,
+                    dailyUser: false
+                };
+                state.user = {
+                    name: "",
+                    profilePic: "",
+                    userId: "",
+                    email: "",
+                    publicProfile: true,
+                    selectedAvatar: "warrior",
+                    purchasedItems: [],
+                    currency: 1250,
+                    streak: 0,
+                    lastLogin: null
+                };
+                state.mainCounter = {
+                    title: "Project Deadline",
+                    date: "2023-12-31",
+                    daysLeft: 14
+                };
+                state.settings = {
+                    notifications: true,
+                    soundEffects: true,
+                    animations: true,
+                    browserNotifications: true,
+                    autoSave: true
+                };
+                state.leaderboard = [];
+                state.activityLog = [];
+                state.workSessions = {};
+                
+                document.getElementById('main-container').style.display = 'none';
+                showAuthModal();
+            }).catch((error) => {
+                console.error('Logout error:', error);
+            });
+        }
+
+        // ===============================================
+        // ENHANCED MODAL MANAGEMENT
+        // ===============================================
+        function showTargetModal() {
+            document.getElementById('target-title').value = '';
+            document.getElementById('target-xp').value = '50';
+            document.getElementById('target-deadline').value = '';
+            document.getElementById('target-modal').style.display = 'flex';
+        }
+
+        function hideTargetModal() {
+            document.getElementById('target-modal').style.display = 'none';
+        }
+
+        function showDateModal() {
+            document.getElementById('main-date-title').value = state.mainCounter.title;
+            document.getElementById('main-target-date').value = state.mainCounter.date;
+            document.getElementById('date-modal').style.display = 'flex';
+        }
+
+        function hideDateModal() {
+            document.getElementById('date-modal').style.display = 'none';
+        }
+
+        function showProfileModal() {
+            const user = auth.currentUser;
+            document.getElementById('profile-name').value = state.user.name || (user ? user.displayName || "" : "");
+            
+            // Set selected avatar
+            document.querySelectorAll('.avatar-option').forEach(option => {
+                if (option.dataset.avatar === state.user.selectedAvatar) {
+                    option.classList.add('selected');
+                } else {
+                    option.classList.remove('selected');
+                }
+            });
+            
+            document.getElementById('profile-modal').style.display = 'flex';
+        }
+
+        function hideProfileModal() {
+            document.getElementById('profile-modal').style.display = 'none';
+        }
+
+        function hideAuthModal() {
+            document.getElementById('auth-modal').style.display = 'none';
+        }
+
+        function showAuthModal() {
+            document.getElementById('auth-modal').style.display = 'flex';
+        }
+
+        function showMainUI() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('main-container').style.display = 'block';
+        }
+
+        // ===============================================
+        // ENHANCED FULLSCREEN TIMER
+        // ===============================================
+        function openFullscreenTimer(targetId) {
+            const target = state.targets.find(t => t.id === targetId);
+            if (!target) return;
+            
+            const timer = state.activeTimers[targetId];
+            if (!timer) return;
+            
+            document.getElementById('fullscreen-timer').dataset.targetId = targetId;
+            document.getElementById('fullscreen-task-title').textContent = target.title;
+            
+            const seconds = timer.seconds;
+            document.getElementById('fullscreen-timer-display').textContent = formatTime(seconds);
+            
+            // Update button states
+            const isRunning = timer.running;
+            document.getElementById('fs-start').style.display = isRunning ? 'none' : 'flex';
+            document.getElementById('fs-pause').style.display = isRunning ? 'flex' : 'none';
+            
+            document.getElementById('fullscreen-timer').classList.add('active');
+        }
+
+        function closeFullscreenTimer() {
+            document.getElementById('fullscreen-timer').classList.remove('active');
+        }
+
+        // ===============================================
+        // ENHANCED SECTION MANAGEMENT
+        // ===============================================
+        function switchSection(sectionName) {
+            // Update navigation buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                if (btn.dataset.section === sectionName) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            
+            // Show/hide sections
+            document.querySelectorAll('.section-content').forEach(section => {
+                if (section.id === `${sectionName}-section`) {
+                    section.style.display = 'block';
+                } else {
+                    section.style.display = 'none';
+                }
+            });
+            
+            // Special handling for specific sections
+            if (sectionName === 'analytics') {
+                renderWorkTimeChart();
+            } else if (sectionName === 'shop') {
+                renderShopItems();
+            }
+        }
+
+        // ===============================================
+        // ENHANCED EVENT LISTENERS
+        // ===============================================
+        function setupEventListeners() {
+            // Authentication
+            document.querySelectorAll('.login-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.dataset.tab;
+                    
+                    // Update active tab
+                    document.querySelectorAll('.login-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show active form
+                    document.querySelectorAll('.login-form').forEach(form => {
+                        form.classList.remove('active');
+                    });
+                    document.getElementById(`${tabName}-form`).classList.add('active');
+                });
+            });
+            
+            document.getElementById('signin-email-btn').addEventListener('click', signInWithEmail);
+            document.getElementById('signup-email-btn').addEventListener('click', signUpWithEmail);
+            document.getElementById('google-signin').addEventListener('click', signInWithGoogle);
+            document.getElementById('google-signup').addEventListener('click', signInWithGoogle);
+            
+            // User profile
+            document.getElementById('user-profile').addEventListener('click', showProfileModal);
+            document.getElementById('logout-btn').addEventListener('click', logoutUser);
+            
+            // Profile modal
+            document.getElementById('cancel-profile').addEventListener('click', hideProfileModal);
+            document.getElementById('save-profile').addEventListener('click', saveProfile);
+            
+            // Avatar selection
+            document.querySelectorAll('.avatar-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.avatar-option').forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                });
+            });
+            
+            // Navigation
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    switchSection(this.dataset.section);
+                });
+            });
+            
+            // Mobile navigation
+            document.getElementById('mobile-add-target').addEventListener('click', showTargetModal);
+            document.getElementById('mobile-set-date').addEventListener('click', showDateModal);
+            document.getElementById('mobile-view-stats').addEventListener('click', () => switchSection('analytics'));
+            document.getElementById('mobile-view-shop').addEventListener('click', () => switchSection('shop'));
+            document.getElementById('mobile-set-date-btn').addEventListener('click', showDateModal);
+            
+            // Targets
+            document.getElementById('new-target-btn').addEventListener('click', showTargetModal);
+            document.getElementById('cancel-target').addEventListener('click', hideTargetModal);
+            document.getElementById('save-target').addEventListener('click', createTargetFromModal);
+            
+            // Date modal
+            document.getElementById('set-date-btn').addEventListener('click', showDateModal);
+            document.getElementById('day-counter-card').addEventListener('click', showDateModal);
+            document.getElementById('cancel-date').addEventListener('click', hideDateModal);
+            document.getElementById('save-date').addEventListener('click', saveMainDate);
+            
+            // Analytics
+            document.getElementById('refresh-analytics').addEventListener('click', renderWorkTimeChart);
+            
+            // Shop
+            document.querySelectorAll('.shop-category').forEach(category => {
+                category.addEventListener('click', function() {
+                    document.querySelectorAll('.shop-category').forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                    renderShopItems(this.dataset.category);
+                });
+            });
+            
+            // Settings
+            document.querySelectorAll('.settings-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.dataset.tab;
+                    
+                    document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    document.querySelectorAll('.settings-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(`${tabName}-tab`).classList.add('active');
+                });
+            });
+            
+            document.getElementById('change-profile-btn').addEventListener('click', showProfileModal);
+            
+            // Settings toggles
+            document.getElementById('browser-notifications').addEventListener('change', function() {
+                state.settings.browserNotifications = this.checked;
+                saveState();
+            });
+            
+            document.getElementById('sound-effects').addEventListener('change', function() {
+                state.settings.soundEffects = this.checked;
+                saveState();
+            });
+            
+            document.getElementById('animations').addEventListener('change', function() {
+                state.settings.animations = this.checked;
+                saveState();
+            });
+            
+            document.getElementById('public-profile').addEventListener('change', function() {
+                state.user.publicProfile = this.checked;
+                saveState();
+            });
+            
+            document.getElementById('auto-save').addEventListener('change', function() {
+                state.settings.autoSave = this.checked;
+                saveState();
+            });
+            
+            // Data management
+            document.getElementById('reset-data').addEventListener('click', function() {
+                if (confirm('Are you sure you want to reset all data? This cannot be undone!')) {
+                    const user = auth.currentUser;
+                    if (user) {
+                        database.ref('users/' + user.uid).remove()
+                            .then(() => {
+                                location.reload();
+                            })
+                            .catch((error) => {
+                                showNotification('Error', 'Failed to reset data', 'fas fa-exclamation-triangle');
+                            });
+                    }
+                }
+            });
+            
+            document.getElementById('export-data').addEventListener('click', function() {
+                const dataStr = JSON.stringify(state, null, 2);
+                const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `solo-leveling-backup-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                showNotification('Data Exported', 'Your data has been downloaded', 'fas fa-download');
+            });
+            
+            // Fullscreen timer
+            document.getElementById('fs-start').addEventListener('click', () => {
+                const targetId = document.getElementById('fullscreen-timer').dataset.targetId;
+                state.activeTimers[targetId].start();
+                document.getElementById('fs-start').style.display = 'none';
+                document.getElementById('fs-pause').style.display = 'flex';
+            });
+            
+            document.getElementById('fs-pause').addEventListener('click', () => {
+                const targetId = document.getElementById('fullscreen-timer').dataset.targetId;
+                state.activeTimers[targetId].pause();
+                document.getElementById('fs-start').style.display = 'flex';
+                document.getElementById('fs-pause').style.display = 'none';
+            });
+            
+            document.getElementById('fs-reset').addEventListener('click', () => {
+                const targetId = document.getElementById('fullscreen-timer').dataset.targetId;
+                state.activeTimers[targetId].reset();
+                document.getElementById('fs-start').style.display = 'flex';
+                document.getElementById('fs-pause').style.display = 'none';
+            });
+            
+            document.getElementById('fs-close').addEventListener('click', closeFullscreenTimer);
+            
+            // Level up
+            document.getElementById('close-level-up').addEventListener('click', () => {
+                document.getElementById('level-up').classList.remove('show');
+            });
+            
+            // Sync status
+            document.getElementById('sync-status').addEventListener('click', () => {
+                if (document.getElementById('sync-status').className.includes('error')) {
+                    saveState();
+                }
+            });
+            
+            // Modal close events
+            document.getElementById('auth-modal').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('auth-modal')) {
+                    // Don't allow closing auth modal - user must authenticate
+                }
+            });
+            
+            document.getElementById('target-modal').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('target-modal')) {
+                    hideTargetModal();
+                }
+            });
+            
+            document.getElementById('date-modal').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('date-modal')) {
+                    hideDateModal();
+                }
+            });
+            
+            document.getElementById('profile-modal').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('profile-modal')) {
+                    hideProfileModal();
+                }
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeFullscreenTimer();
+                    hideTargetModal();
+                    hideDateModal();
+                    hideProfileModal();
+                }
+            });
+        }
+
+        // ===============================================
+        // ENHANCED HELPER FUNCTIONS
+        // ===============================================
+        function createTargetFromModal() {
+            const title = document.getElementById('target-title').value.trim();
+            const xp = document.getElementById('target-xp').value;
+            const deadline = document.getElementById('target-deadline').value;
+            
+            if (!title) {
+                showNotification('Error', 'Please enter a target title', 'fas fa-exclamation-triangle');
+                return;
+            }
+            
+            if (xp < 10 || xp > 500) {
+                showNotification('Error', 'XP must be between 10 and 500', 'fas fa-exclamation-triangle');
+                return;
+            }
+            
+            createTarget(title, xp, deadline);
+            hideTargetModal();
+        }
+
+        function saveProfile() {
+            const newName = document.getElementById('profile-name').value.trim();
+            
+            if (!newName) {
+                showNotification('Error', 'Please enter your name', 'fas fa-exclamation-triangle');
+                return;
+            }
+            
+            state.user.name = newName;
+            
+            // Get selected avatar
+            const selectedAvatarOption = document.querySelector('.avatar-option.selected');
+            if (selectedAvatarOption) {
+                state.user.selectedAvatar = selectedAvatarOption.dataset.avatar;
+            }
+            
+            // Update Firebase user profile
+            const user = auth.currentUser;
+            if (user) {
+                user.updateProfile({
+                    displayName: newName
+                }).then(() => {
+                    updateUI();
+                    hideProfileModal();
+                    saveState();
+                    
+                    showNotification('Profile Updated', 'Your profile has been updated successfully', 'fas fa-user-edit');
+                }).catch((error) => {
+                    showNotification('Error', 'Failed to update profile', 'fas fa-exclamation-triangle');
+                });
+            }
+        }
+
+        function saveMainDate() {
+            const title = document.getElementById('main-date-title').value.trim();
+            const date = document.getElementById('main-target-date').value;
+            
+            if (!title) {
+                showNotification('Error', 'Please enter a goal title', 'fas fa-exclamation-triangle');
+                return;
+            }
+            
+            if (!date) {
+                showNotification('Error', 'Please select a target date', 'fas fa-exclamation-triangle');
+                return;
+            }
+            
+            state.mainCounter.title = title;
+            state.mainCounter.date = date;
+            
+            saveState();
+            updateUI();
+            hideDateModal();
+            showNotification('Goal Updated', `Your main goal has been set to ${formatDate(date)}`, 'fas fa-calendar-day');
+            
+            updateMainCounter();
+        }
+
+        function previewItem(itemId) {
+            const item = state.shopItems.find(i => i.id === itemId);
+            if (!item) return;
+            
+            showNotification('Preview', `Previewing ${item.name}`, 'fas fa-eye');
+            // In a full implementation, this would show a detailed preview
+        }
+
+        // ===============================================
+        // ENHANCED INITIALIZATION
+        // ===============================================
+        function init() {
+            createParticles();
+            
+            // Check authentication state
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    // User is signed in
+                    document.getElementById('loading').style.display = 'none';
+                    showMainUI();
+                    loadState();
+                } else {
+                    // User is signed out
+                    document.getElementById('loading').style.display = 'none';
+                    showAuthModal();
+                }
+            });
+            
+            setupEventListeners();
+            
+            // Initialize with some demo data if needed
+            if (state.targets.length === 0) {
+                createTarget("Complete Project Proposal", 100, "2023-11-30");
+                createTarget("Learn New Framework", 75);
+                createTarget("Daily Coding Practice", 30);
+            }
+            
+            // Update main counter every minute
+            setInterval(updateMainCounter, 60 * 1000);
+            updateMainCounter();
+        }
+
+        // Start the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
